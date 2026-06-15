@@ -6,6 +6,10 @@ estocásticos. Os dados foram gerados pelo professor a partir de um sistema LIT 
 objetivo é caracterizá-los nos domínios do **tempo** e da **frequência**, identificar
 um modelo, validá-lo criticamente e analisar a presença de anomalias.
 
+**Autor:** Jakson da Rocha Almeida  
+**Professor:** Rafael Antunes Nóbrega  
+**Curso:** Mestrado em Engenharia Elétrica — Sistemas Eletrônicos (UFJF)
+
 ## Objetivo
 
 A partir dos sinais de entrada `u[n]` e saída `y[n]`, o trabalho consiste em:
@@ -19,8 +23,7 @@ A partir dos sinais de entrada `u[n]` e saída `y[n]`, o trabalho consiste em:
 
 ## Dados
 
-Os conjuntos de dados estão em `dados_processos_estocasticos.zip` e, quando extraídos,
-geram quatro arquivos CSV. Todos possuem três colunas:
+Quatro arquivos CSV na raiz do projeto. Todos possuem três colunas:
 
 | Coluna | Descrição |
 |--------|-----------|
@@ -73,17 +76,23 @@ geram quatro arquivos CSV. Todos possuem três colunas:
 ```
 stochastic_processes/
 ├── README.md
-├── requirements.txt                      # dependências Python
-├── dados_processos_estocasticos.zip      # dados originais (compactados)
-├── Trabalho 1 - Processos Estocásticos.pdf
-├── data/                                 # CSVs extraídos
-├── src/                                  # código-fonte da análise
-├── results/                              # gráficos e arquivos de saída gerados
-└── relatorio/                            # relatório em PDF
+├── requirements.txt
+├── dados_treino_branco.csv
+├── dados_validacao_branco.csv
+├── dados_treino_colorido.csv
+├── dados_teste_anomalia.csv
+├── notebooks/
+│   ├── visualizar_dados.ipynb      # visualização inicial dos CSVs
+│   └── resolucao_trabalho.ipynb  # análise completa (A, B e C)
+└── relatorio/
+    ├── relatorio.tex               # fonte LaTeX do relatório
+    ├── relatorio.pdf               # relatório compilado
+    ├── gerar_figuras.py            # gera figuras e valores.tex a partir dos dados
+    ├── valores.tex                 # macros com resultados numéricos
+    ├── secoes/                     # seções do relatório
+    ├── figuras/                    # gráficos e fragmentos de tabela
+    └── imagens/                    # logos UFJF
 ```
-
-> A estrutura acima é o destino planejado; pastas e arquivos serão criados conforme o
-> trabalho avança.
 
 ## Como reproduzir
 
@@ -101,13 +110,26 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-3. Extrair os dados (caso ainda não estejam em `data/`):
+3. Abrir e executar o caderno principal:
 
 ```bash
-tar -xf dados_processos_estocasticos.zip
+jupyter notebook notebooks/resolucao_trabalho.ipynb
 ```
 
-4. Executar os scripts de análise em `src/` (a serem criados).
+O caderno carrega os CSVs da raiz do projeto, realiza toda a análise (seções A, B e C)
+e gera os gráficos. É o artefato de código entregue junto com o relatório em PDF.
+
+Para recompilar o relatório LaTeX localmente (opcional):
+
+```bash
+python relatorio/gerar_figuras.py
+cd relatorio
+pdflatex relatorio.tex
+pdflatex relatorio.tex
+```
+
+O script `gerar_figuras.py` reproduz os cálculos do caderno e grava as figuras em
+`relatorio/figuras/` e os valores numéricos em `relatorio/valores.tex`.
 
 ## Ferramentas
 
@@ -120,11 +142,12 @@ Análise em **Python**, utilizando:
 
 ## Entrega
 
-- Relatório em PDF contendo gráficos, estimativas, descrição dos métodos e
-  **interpretação crítica** dos resultados.
-- Códigos utilizados.
-- Arquivos de saída relevantes.
+Conforme o enunciado, são entregues dois arquivos:
 
-O relatório deve permitir a **reprodução** dos resultados, discutindo como
-autocorrelação, PSD, espectro cruzado, coerência e resíduos ajudam a avaliar a
-qualidade e a confiabilidade do modelo identificado.
+- **Relatório em PDF** (`relatorio/relatorio.pdf`) — gráficos, estimativas, descrição dos
+  métodos e interpretação crítica dos resultados.
+- **Caderno Jupyter** (`notebooks/resolucao_trabalho.ipynb`) — código utilizado para carregar
+  os dados, calcular as estimativas e reproduzir todos os resultados do relatório.
+
+O relatório discute como autocorrelação, PSD, espectro cruzado, coerência e resíduos
+ajudam a avaliar a qualidade e a confiabilidade do modelo identificado.
