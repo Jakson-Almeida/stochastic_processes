@@ -1,0 +1,88 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage[a4paper,margin=2.5cm,top=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figuras/}{imagens/}}
+
+% Numeração no sumário: tópicos (seções) e subtópicos (subseções).
+% Subsubseções (ex.: C.3.3) são numeradas no texto mas não aparecem no sumário.
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+% Valores numéricos gerados automaticamente pelo script gerar_figuras.py
+\input{valores.tex}
+
+% Cabeçalho: brasão à esquerda, logo ufjf à direita
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=1.1cm]{logo_header_esquerda.png}}
+\fancyhead[R]{\includegraphics[height=0.9cm]{logo_header_direita.png}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{35pt}
+\addtolength{\topmargin}{-17pt}
+
+\begin{document}
+
+% ----------------------------------------------------------------- Capa
+\begin{titlepage}
+\centering
+\vspace*{1cm}
+
+\includegraphics[width=0.45\textwidth]{logo_ufjf_capa.png}
+
+\vspace{1.2cm}
+{\Large Universidade Federal de Juiz de Fora\par}
+{\large Mestrado em Engenharia Elétrica --- Sistemas Eletrônicos\par}
+
+\vspace{2.5cm}
+\rule{\textwidth}{0.5pt}\\[0.4cm]
+{\huge\bfseries Trabalho 1 --- Processos Estocásticos\par}
+\vspace{0.3cm}
+{\large Caracterização, identificação e validação de um sistema LIT discreto\par}
+\rule{\textwidth}{0.5pt}
+
+\vspace{2.5cm}
+\begin{flushleft}
+\large
+\textbf{Autor:} Jakson da Rocha Almeida\\[0.3cm]
+\textbf{Professor:} Rafael Antunes Nóbrega\\[0.3cm]
+\textbf{Disciplina:} Processos Estocásticos\\[0.3cm]
+\textbf{Curso:} Mestrado em Engenharia Elétrica --- Sistemas Eletrônicos
+\end{flushleft}
+
+\vfill
+{\large 19 de junho de 2026\par}
+{\large UFJF, Juiz de Fora, MG, Brasil\par}
+\end{titlepage}
+
+% ----------------------------------------------------------------- Pré-textual
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+% ----------------------------------------------------------------- Conteúdo
+\input{secoes/01_introducao.tex}
+\input{secoes/02_dados_metodos.tex}
+\input{secoes/03_branco.tex}
+\input{secoes/04_colorido.tex}
+\input{secoes/05_anomalia.tex}
+\input{secoes/06_conclusao.tex}
+
+\end{document}

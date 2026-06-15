@@ -1,0 +1,151 @@
+\section{Conjunto de teste com anomalia}
+
+Esta seção aplica o modelo identificado nos dados normais ao conjunto
+\texttt{dados\_teste\_anomalia.csv}, calcula os resíduos e os analisa para detectar
+anomalias.
+
+\subsection{Aplicação do modelo}
+
+O modelo FIR obtido no conjunto de entrada branca foi aplicado à entrada do conjunto
+de teste, gerando a saída prevista. A Figura~\ref{fig:C_sinais} mostra a entrada, a
+saída verdadeira e a saída prevista. Na primeira parte do registro, as duas saídas se
+acompanham. A partir de certo ponto, a saída verdadeira passa a apresentar picos que
+a previsão não reproduz.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{C_sinais.png}
+\caption{Entrada, saída verdadeira e saída prevista no conjunto de teste.}
+\label{fig:C_sinais}
+\end{figure}
+
+\subsection{Cálculo dos resíduos}
+
+Os resíduos foram calculados como $e[n] = y[n] - \hat{y}[n]$, descartando as
+primeiras amostras correspondentes ao transitório do filtro. Como referência de
+normalidade, usou-se o desvio padrão dos resíduos da validação com entrada branca,
+igual a \valCbaselineStd, faixa em que o modelo é válido e não há anomalia. A
+Figura~\ref{fig:C_residuos} mostra os resíduos ao longo do tempo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{C_residuos.png}
+\caption{Resíduos $e[n]$ no conjunto de teste. As linhas tracejadas marcam três vezes
+o valor de referência.}
+\label{fig:C_residuos}
+\end{figure}
+
+\subsection{Análise dos resíduos}
+
+\subsubsection{Estatísticas globais}
+
+A variância global dos resíduos do conjunto de teste é cerca de \valCvarRatio{} vezes
+maior do que a de referência, o que já aponta uma diferença de comportamento em
+relação ao caso normal.
+
+\subsubsection{Energia local}
+
+A energia local, definida como a média móvel do quadrado dos resíduos, está na
+Figura~\ref{fig:C_energia_local}. Ela permanece próxima do valor de referência na
+primeira parte do registro e em seguida sobe, chegando a um pico de cerca de
+\valCenergiaRatio{} vezes a referência. Esse salto marca uma mudança de regime em
+torno de $n \approx \valCnChange$.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{C_energia_local.png}
+\caption{Energia local dos resíduos no conjunto de teste.}
+\label{fig:C_energia_local}
+\end{figure}
+
+\subsubsection{Autocorrelação}
+
+A Figura~\ref{fig:C_autocorr_residuos} mostra a autocorrelação dos resíduos para o
+registro completo e para os dois regimes separados pela mudança detectada. No regime
+normal, a fração de atrasos fora da banda é de \valCautoNormal, ou seja, os resíduos
+são próximos de um ruído branco. No regime anômalo, essa fração sobe para
+\valCautoAnom, o que indica que o modelo deixou de descrever a dinâmica naquele
+trecho.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{C_autocorr_residuos.png}
+\caption{Autocorrelação dos resíduos: registro completo, regime normal e regime
+anômalo.}
+\label{fig:C_autocorr_residuos}
+\end{figure}
+
+\subsection{Detecção de anomalias}
+
+Foram combinados três indicadores simples sobre os resíduos: a energia local, para
+mudança de regime; a variância por blocos, para aumento do erro; e um limiar de
+amplitude, para impulsos. A Figura~\ref{fig:C_deteccao} reúne a variância por blocos e
+a marcação dos impulsos. A Tabela~\ref{tab:C_deteccao} resume os números.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{C_deteccao.png}
+\caption{Variância dos resíduos por bloco e impulsos detectados no conjunto de teste.}
+\label{fig:C_deteccao}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Resumo da detecção nos dois regimes.}
+\label{tab:C_deteccao}
+\begin{tabular}{lcc}
+\toprule
+Indicador & Regime normal & Regime anômalo \\
+\midrule
+Desvio padrão dos resíduos & \valCstdNormal & \valCstdAnom \\
+Razão em relação à referência & --- & \valCstdAnomRatio \\
+Maior valor absoluto & --- & \valCmaxAnom \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A mudança de regime foi localizada em torno de $n \approx \valCnChange$. No regime
+anômalo, o desvio padrão dos resíduos é cerca de \valCstdAnomRatio{} vezes o valor de
+referência. Foram detectados \valCnumImpulsos{} impulsos com amplitude acima de oito
+vezes a referência.
+
+\subsection{A anomalia no sinal de saída ou nos resíduos}
+
+Resta comparar onde a anomalia aparece com mais clareza. A
+Figura~\ref{fig:C_comparacao} mostra, em cima, a energia local do sinal de saída e,
+embaixo, a energia local dos resíduos. A Tabela~\ref{tab:C_comparacao} reúne algumas
+medidas para os dois sinais.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{C_comparacao_y_residuo.png}
+\caption{Energia local do sinal de saída e dos resíduos no conjunto de teste.}
+\label{fig:C_comparacao}
+\end{figure}
+
+\begin{table}[H]
+\centering
+\caption{Comparação entre o sinal de saída e os resíduos no regime anômalo.}
+\label{tab:C_comparacao}
+\begin{tabular}{lcc}
+\toprule
+Medida & Saída $y[n]$ & Resíduos $e[n]$ \\
+\midrule
+Razão de variância (anômalo/normal) & \valCvarRatioY & \valCvarRatio \\
+Pico em relação ao desvio normal & \valCpicoStdY & \valCpicoStdE \\
+Atrasos de autocorrelação fora da banda & \valCautoAnomY & \valCautoAnom \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A anomalia aparece nos dois sinais, mas fica mais clara nos resíduos. O sinal de saída
+sempre tem variabilidade, porque é a resposta de um sistema excitado por ruído, e por
+isso a mudança eleva a variância apenas cerca de \valCvarRatioY{} vezes. Nos resíduos,
+que removem a parte previsível da saída, o contraste é bem maior: a variância sobe
+cerca de \valCvarRatio{} vezes em relação à referência e os impulsos se destacam de um
+patamar próximo de zero. Aplicar o mesmo limiar de impulso ao sinal de saída marcaria
+um número muito grande de amostras, porque a saída atinge amplitudes altas mesmo sem
+anomalia. Além disso, a autocorrelação dos resíduos no regime anômalo revela que o
+modelo deixou de explicar a dinâmica, informação que o sinal de saída sozinho não
+fornece. Por esses motivos, a análise dos resíduos é o caminho mais adequado para a
+detecção.

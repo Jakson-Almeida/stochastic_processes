@@ -1,0 +1,62 @@
+\section{Dados e métodos}
+
+\subsection{Conjuntos de dados}
+
+Os dados estão organizados em quatro arquivos, cada um com três colunas: o índice de
+tempo discreto $n$, a entrada $u[n]$ e a saída $y[n]$. A Tabela~\ref{tab:dados}
+resume os conjuntos e o uso de cada um.
+
+\begin{table}[H]
+\centering
+\caption{Conjuntos de dados utilizados no trabalho.}
+\label{tab:dados}
+\begin{tabular}{lcl}
+\toprule
+Arquivo & Amostras & Uso \\
+\midrule
+\texttt{dados\_treino\_branco.csv}    & 5000 & Treino com entrada branca \\
+\texttt{dados\_validacao\_branco.csv} & 3000 & Validação do modelo \\
+\texttt{dados\_treino\_colorido.csv}  & 5000 & Treino com entrada colorida \\
+\texttt{dados\_teste\_anomalia.csv}   & 5000 & Teste de detecção de anomalia \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Métodos de estimação}
+
+As estatísticas de primeira e segunda ordem foram estimadas diretamente das amostras.
+A média e a variância seguem os estimadores usuais. A autocorrelação foi calculada
+com o estimador enviesado a partir dos sinais centrados, e normalizada pelo valor no
+atraso zero para facilitar a leitura. Para a correlação cruzada adotou-se a definição
+$R_{yu}[k] = \mathrm{E}\{y[n]\,u[n-k]\}$, de modo que, para entrada branca, a parte
+causal aparece nos atrasos positivos.
+
+No domínio da frequência, a densidade espectral de potência foi estimada pelo método
+de Welch, assim como o espectro cruzado e a coerência. Não há informação sobre a
+frequência de amostragem, então as frequências são apresentadas de forma normalizada,
+em ciclos por amostra, no intervalo de $0$ a $0{,}5$.
+
+A resposta em frequência foi estimada por dois caminhos. O primeiro usa apenas as
+densidades espectrais e fornece o módulo,
+\begin{equation}
+|\hat{H}_1(e^{j\omega})| = \sqrt{\frac{\hat{S}_{yy}(e^{j\omega})}{\hat{S}_{uu}(e^{j\omega})}} .
+\end{equation}
+O segundo usa o espectro cruzado e fornece também a fase,
+\begin{equation}
+\hat{H}_2(e^{j\omega}) = \frac{\hat{S}_{yu}(e^{j\omega})}{\hat{S}_{uu}(e^{j\omega})} .
+\end{equation}
+A coerência, por sua vez, é definida por
+\begin{equation}
+\gamma^2_{uy}(e^{j\omega}) = \frac{|\hat{S}_{yu}(e^{j\omega})|^2}{\hat{S}_{uu}(e^{j\omega})\,\hat{S}_{yy}(e^{j\omega})} ,
+\end{equation}
+e indica, em cada frequência, o quanto a saída está linearmente relacionada com a
+entrada.
+
+\subsection{Modelo identificado}
+
+Optou-se por um modelo de resposta ao impulso finita (FIR),
+$\hat{y}[n] = \sum_{k=0}^{M-1} h[k]\,u[n-k]$, com os coeficientes $h[k]$ estimados por
+mínimos quadrados. Essa escolha se ajusta bem ao caso de entrada branca, no qual a
+correlação cruzada já fornece uma estimativa direta da resposta ao impulso, e mantém
+a interpretação simples, sem a necessidade de escolher ordens de partes
+autorregressivas ou a dimensão de um espaço de estados.

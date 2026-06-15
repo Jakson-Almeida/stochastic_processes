@@ -1,0 +1,144 @@
+\section{Conjunto de entrada colorida}
+
+Esta seção repete a análise temporal e espectral para o conjunto
+\texttt{dados\_treino\_colorido.csv}, em que a entrada não é branca, e compara os
+resultados com o caso anterior. A Figura~\ref{fig:B_sinais} mostra os sinais no tempo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{B_sinais.png}
+\caption{Entrada $u[n]$ e saída $y[n]$ do conjunto de treino com entrada colorida.}
+\label{fig:B_sinais}
+\end{figure}
+
+\subsection{Análise temporal e espectral}
+
+A Figura~\ref{fig:B_autocorr} mostra as autocorrelações. Diferente do caso branco, a
+entrada agora tem autocorrelação que decai devagar, com uma fração de \valBfracAutoU{}
+dos atrasos fora da banda de confiança. Isso confirma que a entrada é colorida e tem
+memória. Como consequência, a relação simples entre correlação cruzada e resposta ao
+impulso deixa de valer, pois a correlação cruzada passa a misturar a resposta do
+sistema com a autocorrelação da entrada.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{B_autocorr.png}
+\caption{Autocorrelação normalizada da entrada e da saída (entrada colorida).}
+\label{fig:B_autocorr}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{B_xcorr.png}
+\caption{Correlação cruzada $R_{yu}[k]$ para o conjunto de entrada colorida.}
+\label{fig:B_xcorr}
+\end{figure}
+
+A Figura~\ref{fig:B_psd} mostra as densidades espectrais. A energia da entrada está
+concentrada nas frequências baixas e cai bastante nas altas. A razão entre os valores
+máximo e mínimo do espectro da entrada é de cerca de \valBrazaoPSD, contra cerca de
+\valArazaoPSD{} no caso branco, o que mede o quanto a entrada é colorida.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{B_psd.png}
+\caption{Densidade espectral de potência da entrada e da saída (entrada colorida).}
+\label{fig:B_psd}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{B_espectro_cruzado.png}
+\caption{Módulo e fase do espectro cruzado entrada--saída (entrada colorida).}
+\label{fig:B_espectro_cruzado}
+\end{figure}
+
+A coerência, na Figura~\ref{fig:B_coerencia}, fica próxima de um apenas nas
+frequências baixas e cai cedo. O valor médio é \valBcohMedia{} e a fração de
+frequências com coerência acima de $0{,}9$ é \valBcohFrac, abaixo do caso branco.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{B_coerencia.png}
+\caption{Coerência entre entrada e saída (entrada colorida).}
+\label{fig:B_coerencia}
+\end{figure}
+
+\subsection{Comparação com o caso de entrada branca}
+
+A Figura~\ref{fig:B_comparacao} reúne, lado a lado, a autocorrelação da entrada, a
+densidade espectral da entrada e a coerência nos dois casos. As diferenças são
+claras: a entrada branca tem autocorrelação concentrada no atraso zero e espectro
+plano, enquanto a colorida tem autocorrelação longa e espectro concentrado nas
+frequências baixas. A variância da saída também muda, passando de \valBvarYbranco{}
+no caso branco para \valBvarY{} no colorido, porque a entrada colorida concentra
+energia justamente na faixa de passagem do sistema.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{B_comparacao.png}
+\caption{Comparação entre os casos de entrada branca e colorida: autocorrelação da
+entrada, densidade espectral da entrada e coerência.}
+\label{fig:B_comparacao}
+\end{figure}
+
+A Tabela~\ref{tab:B_coerencia} mostra a coerência média por faixa de frequência nos
+dois casos. No caso branco a coerência permanece alta até frequências mais altas; no
+colorido ela cai antes, acompanhando a perda de energia da entrada.
+
+\begin{table}[H]
+\centering
+\caption{Coerência média por faixa de frequência nos dois casos.}
+\label{tab:B_coerencia}
+\begin{tabular}{lcc}
+\toprule
+Faixa (ciclos/amostra) & Branco & Colorido \\
+\midrule
+\input{figuras/tab_coerencia_faixa.tex} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Por que a identificação piora em algumas faixas}
+
+Para tornar concreta a discussão, um modelo FIR foi identificado a partir dos dados
+coloridos e a sua resposta em frequência foi comparada com o modelo obtido no caso
+branco, que serve de referência por ter sido estimado com excitação em toda a faixa.
+A Figura~\ref{fig:B_erro_frequencia} mostra as duas respostas e o erro de módulo,
+junto com a coerência.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.98\textwidth]{B_erro_frequencia.png}
+\caption{Resposta em frequência do FIR identificado com dados coloridos comparada à
+referência, e erro de módulo sobreposto à coerência.}
+\label{fig:B_erro_frequencia}
+\end{figure}
+
+A Tabela~\ref{tab:B_erro} apresenta o erro de módulo por faixa. Na faixa de passagem,
+em que a coerência é alta, o erro é de cerca de \valBerroBaixa{} dB. Nas frequências
+altas, em que a entrada quase não excita o sistema, o erro cresce e chega a cerca de
+\valBerroAlta{} dB.
+
+\begin{table}[H]
+\centering
+\caption{Erro de módulo do modelo colorido por faixa e coerência correspondente.}
+\label{tab:B_erro}
+\begin{tabular}{lcc}
+\toprule
+Faixa (ciclos/amostra) & Erro de módulo (dB) & Coerência \\
+\midrule
+\input{figuras/tab_erro_faixa.tex} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+O comportamento se explica pela forma como a resposta em frequência é estimada. A
+estimativa depende da divisão pelo espectro da entrada. Onde a entrada concentra
+energia, essa divisão é estável e a estimativa é confiável. Onde a entrada quase não
+excita o sistema, a saída ali é dominada por ruído, a divisão fica mal condicionada e
+o erro aumenta. A coerência sinaliza com antecedência essa perda de confiabilidade,
+funcionando como um indicador de quais faixas podem ser usadas. Vale notar ainda que
+um coeficiente de determinação alto não garante um bom modelo em todas as
+frequências, porque essa medida é dominada pela energia das frequências baixas e pode
+ocultar erros grandes na faixa pouco excitada.

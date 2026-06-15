@@ -1,0 +1,40 @@
+\section{Conclusão}
+
+O trabalho caracterizou um sistema LIT discreto a partir de conjuntos de dados de
+entrada e saída e chegou a um modelo capaz de descrever bem o seu comportamento na
+faixa de frequência excitada.
+
+No caso de entrada branca, a análise no tempo e na frequência indicou um sistema do
+tipo passa-baixas. A correlação cruzada forneceu uma estimativa direta da resposta ao
+impulso, e o modelo FIR identificado por mínimos quadrados alcançou bom ajuste tanto
+no treino quanto na validação, com resíduos próximos de um ruído branco. A coerência
+mostrou em quais faixas a relação entrada--saída pode ser considerada confiável.
+
+No caso de entrada colorida, a entrada concentrou energia nas frequências baixas e
+deixou as altas pouco excitadas. A comparação com o caso branco mostrou que a
+identificação piora justamente nessas faixas, e que a coerência antecipa essa perda de
+confiabilidade. Ficou claro também que um bom valor de ajuste global não garante um
+modelo correto em todas as frequências.
+
+No caso do conjunto de teste, a aplicação do modelo permitiu calcular os resíduos e
+localizar uma mudança de regime, além de um aumento da variância e de impulsos
+isolados. A comparação mostrou que a anomalia se manifesta com mais clareza nos
+resíduos do que no sinal de saída, o que reforça o uso dos resíduos como ferramenta de
+monitoramento.
+
+De modo geral, a autocorrelação, a densidade espectral de potência, o espectro
+cruzado, a coerência e os resíduos atuaram de forma complementar. As três primeiras
+descrevem o sinal e a relação entrada--saída, a coerência indica onde essa relação é
+confiável, e os resíduos verificam o quanto resta por explicar depois de aplicado o
+modelo. Esse conjunto de ferramentas permitiu avaliar a qualidade e os limites do
+modelo identificado.
+
+\section*{Reprodução dos resultados}
+\addcontentsline{toc}{section}{Reprodução dos resultados}
+
+Os resultados podem ser reproduzidos a partir do repositório do trabalho. A análise
+completa está no caderno \texttt{notebooks/resolucao\_trabalho.ipynb}. As figuras e os
+valores numéricos deste relatório são gerados pelo script
+\texttt{relatorio/gerar\_figuras.py}, que lê os mesmos arquivos de dados e grava as
+figuras na pasta \texttt{relatorio/figuras}. As dependências estão listadas em
+\texttt{requirements.txt}.

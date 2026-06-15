@@ -1,0 +1,179 @@
+\section{Conjunto de entrada branca}
+
+Esta seção trata do conjunto \texttt{dados\_treino\_branco.csv}, em que a entrada é
+aproximadamente branca. A Figura~\ref{fig:A_sinais} mostra os sinais de entrada e de
+saída ao longo do tempo.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{A_sinais.png}
+\caption{Entrada $u[n]$ e saída $y[n]$ do conjunto de treino com entrada branca.}
+\label{fig:A_sinais}
+\end{figure}
+
+\subsection{Média, variância e autocorrelação}
+
+A Tabela~\ref{tab:A_stats} reúne as estatísticas de primeira e segunda ordem. A
+entrada tem média próxima de zero e variância próxima de um, como se espera de um
+ruído branco padrão. A saída tem média próxima de zero e variância menor, o que já
+sugere um sistema que atenua parte da energia da entrada.
+
+\begin{table}[H]
+\centering
+\caption{Estatísticas dos sinais do conjunto de entrada branca.}
+\label{tab:A_stats}
+\begin{tabular}{lcc}
+\toprule
+Sinal & Média & Variância \\
+\midrule
+$u[n]$ & \valAmediaU & \valAvarU \\
+$y[n]$ & \valAmediaY & \valAvarY \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+A Figura~\ref{fig:A_autocorr} apresenta as autocorrelações normalizadas. Para a
+entrada, apenas uma fração de \valAfracAutoU{} dos atrasos diferentes de zero
+ultrapassa a banda de confiança, valor próximo do esperado por acaso, o que é
+compatível com um sinal branco. Para a saída, essa fração sobe para
+\valAfracAutoY, o que indica memória: a saída é a versão filtrada da entrada e por
+isso guarda correlação entre amostras vizinhas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{A_autocorr.png}
+\caption{Autocorrelação normalizada da entrada e da saída (entrada branca). As linhas
+tracejadas indicam a banda de confiança aproximada de 95\%.}
+\label{fig:A_autocorr}
+\end{figure}
+
+\subsection{Correlação cruzada}
+
+Para entrada branca vale a relação $R_{yu}[k] = \sigma_u^2\,h[k]$, ou seja, a
+correlação cruzada reproduz a resposta ao impulso a menos de um fator de escala. A
+Figura~\ref{fig:A_xcorr} mostra esse comportamento, com pico no atraso
+$k = \valApicoXcorr$ e valores próximos de zero nos atrasos negativos, o que é
+coerente com um sistema causal.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_xcorr.png}
+\caption{Correlação cruzada $R_{yu}[k]$ para o conjunto de entrada branca.}
+\label{fig:A_xcorr}
+\end{figure}
+
+\subsection{Densidade espectral de potência}
+
+A Figura~\ref{fig:A_psd} traz as densidades espectrais de potência da entrada e da
+saída. O espectro da entrada é aproximadamente plano, o que confirma o caráter
+branco do sinal. O espectro da saída concentra energia nas frequências baixas e cai
+nas altas, indicando um sistema do tipo passa-baixas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_psd.png}
+\caption{Densidade espectral de potência da entrada e da saída (entrada branca).}
+\label{fig:A_psd}
+\end{figure}
+
+\subsection{Espectro cruzado}
+
+A Figura~\ref{fig:A_espectro_cruzado} mostra o módulo e a fase do espectro cruzado
+entre entrada e saída. O módulo segue a forma do espectro da saída, e a fase varia de
+maneira regular nas frequências em que há energia, o que prepara a estimativa da
+resposta em frequência.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_espectro_cruzado.png}
+\caption{Módulo e fase do espectro cruzado entrada--saída (entrada branca).}
+\label{fig:A_espectro_cruzado}
+\end{figure}
+
+\subsection{Coerência}
+
+A coerência, na Figura~\ref{fig:A_coerencia}, fica próxima de um nas frequências
+baixas e cai nas altas. O valor médio é \valAcohMedia{} e a fração de frequências com
+coerência acima de $0{,}9$ é \valAcohFrac. Essa queda não indica um problema: ela
+ocorre justamente onde a saída tem pouca energia, de modo que a relação entrada--saída
+é confiável na faixa de passagem do sistema e perde confiabilidade na faixa de
+rejeição.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_coerencia.png}
+\caption{Coerência entre entrada e saída (entrada branca).}
+\label{fig:A_coerencia}
+\end{figure}
+
+\subsection{Resposta em frequência}
+
+A Figura~\ref{fig:A_resposta_frequencia} compara as duas estimativas da resposta em
+frequência. Na faixa de passagem, em que a coerência é alta, os dois métodos
+coincidem. Na faixa de rejeição, o primeiro método tende a superestimar o módulo,
+porque o ruído presente na saída infla o termo $\hat{S}_{yy}$. O segundo método, que
+usa o espectro cruzado, é menos sensível a esse ruído e fornece também a fase.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_resposta_frequencia.png}
+\caption{Resposta em frequência estimada pelos dois métodos (entrada branca).}
+\label{fig:A_resposta_frequencia}
+\end{figure}
+
+\subsection{Identificação do modelo}
+
+O modelo FIR foi ajustado por mínimos quadrados. Ao variar a ordem, o coeficiente de
+determinação passa de \valArquadMcinco{} com cinco coeficientes para \valArquadMdez{}
+com dez, e depois se estabiliza, o que sugere que a dinâmica relevante cabe em poucos
+coeficientes. Adotou-se $M = 30$, com coeficiente de determinação de \valArquadTreino{}
+no próprio conjunto de treino. A Figura~\ref{fig:A_fir_impulso} mostra a resposta ao
+impulso estimada e a sua concordância com a correlação cruzada normalizada. O ganho
+em frequência zero, dado pela soma dos coeficientes, é \valAganhoDC.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{A_fir_impulso.png}
+\caption{Resposta ao impulso do modelo FIR e comparação com a correlação cruzada
+normalizada.}
+\label{fig:A_fir_impulso}
+\end{figure}
+
+A Figura~\ref{fig:A_fir_frequencia} compara a resposta em frequência do modelo FIR
+com as estimativas não paramétricas. As três curvas coincidem na faixa de passagem,
+o que dá confiança ao modelo identificado.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_fir_frequencia.png}
+\caption{Resposta em frequência do FIR identificado e das estimativas não
+paramétricas.}
+\label{fig:A_fir_frequencia}
+\end{figure}
+
+\subsection{Validação}
+
+O modelo foi aplicado ao conjunto \texttt{dados\_validacao\_branco.csv}. A
+Figura~\ref{fig:A_validacao} mostra um trecho da saída verdadeira e da saída prevista,
+que se sobrepõem. O coeficiente de determinação na validação é \valArquadVal, o índice de
+ajuste é \valAfitval\%, e o erro quadrático médio é \valArmseVal. Como esses valores
+são próximos dos obtidos no treino, não há sinal de sobreajuste.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{A_validacao.png}
+\caption{Saída verdadeira e prevista no conjunto de validação (trecho inicial).}
+\label{fig:A_validacao}
+\end{figure}
+
+A Figura~\ref{fig:A_residuos_validacao} mostra os resíduos da validação e a sua
+autocorrelação. Os resíduos têm média próxima de zero e autocorrelação dentro da
+banda de confiança, ou seja, são próximos de um ruído branco. Isso indica que o
+modelo captura a parte previsível da saída e deixa pouco padrão por explicar.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{A_residuos_validacao.png}
+\caption{Resíduos da validação e a sua autocorrelação.}
+\label{fig:A_residuos_validacao}
+\end{figure}
