@@ -1,4 +1,8 @@
+numpy
+scipy
 pandas
 matplotlib
+statsmodels
 jupyter
 ipykernel
+nbconvert
