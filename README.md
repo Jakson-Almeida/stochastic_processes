@@ -1,18 +1,14 @@
-# Trabalho 1 — Processos Estocásticos
+# Processos Estocásticos
 
 Caracterização de sinais, estimação da relação entrada–saída e identificação de um
 sistema **LIT (Linear e Invariante no Tempo) discreto** excitado por processos
-estocásticos. Os dados foram gerados pelo professor a partir de um sistema LIT e o
-objetivo é caracterizá-los nos domínios do **tempo** e da **frequência**, identificar
-um modelo, validá-lo criticamente e analisar a presença de anomalias.
-
-**Autor:** Jakson da Rocha Almeida  
-**Professor:** Rafael Antunes Nóbrega  
-**Curso:** Mestrado em Engenharia Elétrica — Sistemas Eletrônicos (UFJF)
+estocásticos. Os dados foram gerados a partir de um sistema LIT conhecido; o objetivo
+é caracterizá-los nos domínios do **tempo** e da **frequência**, identificar um modelo,
+validá-lo criticamente e analisar a presença de anomalias.
 
 ## Objetivo
 
-A partir dos sinais de entrada `u[n]` e saída `y[n]`, o trabalho consiste em:
+A partir dos sinais de entrada `u[n]` e saída `y[n]`, o projeto aborda:
 
 1. Caracterizar estatisticamente os sinais (média, variância, autocorrelação).
 2. Estimar a relação entrada–saída no domínio da frequência (PSD, espectro cruzado, coerência).
@@ -117,7 +113,7 @@ jupyter notebook notebooks/resolucao_trabalho.ipynb
 ```
 
 O caderno carrega os CSVs da raiz do projeto, realiza toda a análise (seções A, B e C)
-e gera os gráficos. É o artefato de código entregue junto com o relatório em PDF.
+e gera os gráficos.
 
 Para recompilar o relatório LaTeX localmente (opcional):
 
@@ -139,3 +135,10 @@ Análise em **Python**, utilizando:
 - `scipy.signal` — correlação, PSD (Welch), espectro cruzado (CSD) e coerência.
 - `matplotlib` — geração dos gráficos.
 - `statsmodels` / `scipy` — identificação de modelos (FIR/ARX) e análise de resíduos.
+
+## Saídas
+
+- **Relatório em PDF** (`relatorio/relatorio.pdf`) — gráficos, estimativas, descrição dos
+  métodos e interpretação dos resultados.
+- **Caderno Jupyter** (`notebooks/resolucao_trabalho.ipynb`) — código para carregar os
+  dados, calcular as estimativas e reproduzir os resultados do relatório.
