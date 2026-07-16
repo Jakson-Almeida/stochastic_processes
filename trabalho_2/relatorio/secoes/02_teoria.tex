@@ -1,0 +1,61 @@
+\section{Fundamentos teóricos}
+
+\subsection{Filtro de Wiener}
+
+O filtro de Wiener busca o filtro linear que minimiza o erro quadrático médio
+entre a saída e um sinal desejado. No domínio da frequência, para processos
+estacionários de média nula, a resposta em frequência ótima é
+\begin{equation}
+H(e^{j\omega}) = \frac{S_{xy}(e^{j\omega})}{S_{xx}(e^{j\omega})},
+\end{equation}
+em que \(S_{xx}\) é a densidade espectral da observação e \(S_{xy}\) é o
+espectro cruzado entre observação e sinal desejado. Quando o sinal desejado e o
+ruído são incorrelacionados e \(y = x + r\), obtém-se a forma
+\begin{equation}
+H(e^{j\omega}) = \frac{S_{xx}(e^{j\omega})}{S_{xx}(e^{j\omega}) + S_{rr}(e^{j\omega})}.
+\end{equation}
+No presente trabalho, \(S_{xx}\) é modelada a partir do espectro do template
+(escalado por uma amplitude típica do treino) e \(S_{rr}\) é estimada pelo
+método de Welch nas janelas de ruído puro.
+
+\subsection{Filtro casado}
+
+O filtro casado maximiza a razão sinal-ruído no instante de interesse quando a
+forma do sinal é conhecida. Para ruído branco, a resposta impulsiva é uma
+versão revertida no tempo do template, \(h[n] = s[-n]\). A saída equivale à
+correlação cruzada entre a observação e \(s[n]\). O máximo dessa saída é usado
+como estatística de detecção, e a posição do máximo estima \(n_0\).
+
+Quando o ruído é colorido, a formulação ótima envolve a branqueação do ruído
+(ou, de forma equivalente, o uso da covariância \(C^{-1}\)). Mesmo assim, o
+filtro casado clássico permanece um detector simples e robusto e é o método
+base adotado aqui para localização e detecção.
+
+\subsection{Estimador BLUE da amplitude}
+
+Fixado o instante \(n_0\), a observação na janela pode ser escrita como
+\(y = A s_{n_0} + r\), em que \(s_{n_0}\) é o template alinhado em \(n_0\). O
+melhor estimador linear não viesado (BLUE) da amplitude é
+\begin{equation}
+\hat{A} = \frac{s_{n_0}^{\mathsf{T}} C^{-1} y}{s_{n_0}^{\mathsf{T}} C^{-1} s_{n_0}}.
+\end{equation}
+Se o ruído for branco, \(C = \sigma^2 I\) e a expressão reduz-se a
+\begin{equation}
+\hat{A} = \frac{s_{n_0}^{\mathsf{T}} y}{s_{n_0}^{\mathsf{T}} s_{n_0}}.
+\end{equation}
+No trabalho, comparam-se as duas formas: BLUE branco e BLUE com a covariância
+estimada a partir das janelas de ruído puro.
+
+\subsection{Limiar de detecção e métricas}
+
+Sob a hipótese \(H_0\) (apenas ruído), define-se um limiar \(\eta\) de modo que
+a taxa de falso alarme seja aproximadamente \(1\%\). Em seguida, no conjunto
+rotulado, avaliam-se:
+\begin{itemize}
+  \item reconstrução da forma: RMSE entre \(\hat{A}\,s[n-\hat{n}_0]\) e o pulso
+  verdadeiro \(A\,s[n-n_0]\);
+  \item detecção: curva ROC, AUC e, após o limiar, matriz de confusão, precisão,
+  revocação e F1;
+  \item amplitude: RMSE entre \(\hat{A}\) e \(A\) verdadeira nas janelas com
+  evento.
+\end{itemize}

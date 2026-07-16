@@ -1,0 +1,29 @@
+\section{Conclusão}
+
+O ruído das janelas analisadas não pode ser tratado como branco: autocorrelação
+e PSD indicam correlação temporal relevante. O template do pulso concentra
+energia em baixas frequências, região em que o ruído também é significativo.
+
+Nessas condições, o filtro casado foi o elemento central para detecção e
+localização do instante \(n_0\) (mediana do erro da ordem de
+\(\valNZeroErrMed\) amostras). O limiar escolhido para FA aproximada de \(1\%\)
+controla bem os falsos positivos, ao custo de muitos falsos negativos e F1
+moderado. O filtro de Wiener, na formulação adotada, pouco alterou a
+reconstrução e a detecção em relação ao sinal bruto ou ao casado puro.
+
+A estimação de amplitude beneficia-se do BLUE que incorpora a covariância do
+ruído. A reconstrução \(\hat{A}\,s[n-\hat{n}_0]\) é claramente superior ao uso
+direto de \(y[n]\) ou da saída de Wiener como estimativa da forma do pulso.
+
+Em síntese: para detectar, o filtro casado; para estimar amplitude e
+reconstruir a forma, o BLUE colorido alinhado pelo casado. Os resultados no
+teste acompanham os do treino, sem retreino de limiar.
+
+\section*{Entrega}
+\addcontentsline{toc}{section}{Entrega}
+
+São entregues dois arquivos: este relatório em PDF e o caderno Jupyter com a
+análise completa. O PDF reúne a teoria dos filtros, os gráficos, as estimativas
+e a interpretação dos resultados. O caderno contém o código utilizado para
+carregar os dados, projetar os filtros, ajustar o limiar no treino e avaliar o
+desempenho no teste.

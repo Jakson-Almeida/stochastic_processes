@@ -1,0 +1,21 @@
+\section{Introdução}
+
+Este trabalho trata da detecção e da estimação de sinais impulsivos imersos em
+ruído, situação comum em instrumentação e aquisição de dados. A observação em
+cada janela de medição é modelada como
+\begin{equation}
+y[n] = A\, s[n - n_0] + r[n],
+\end{equation}
+em que \(s[n]\) é a forma conhecida do pulso (template), \(A\) é a amplitude,
+\(n_0\) é o instante de início do pulso na janela e \(r[n]\) é o ruído.
+
+O objetivo não é apenas decidir se há pulso, mas também localizar \(n_0\) e
+estimar \(A\). Para isso, aplicam-se filtros estocásticos --- em especial o
+filtro de Wiener, o filtro casado e o estimador BLUE --- e comparam-se
+desempenhos em três tarefas: reconstrução da forma de onda, detecção e
+estimação de amplitude.
+
+Os filtros e o limiar de detecção são ajustados apenas no conjunto de treino.
+O conjunto de teste é usado uma única vez, após a escolha dos métodos finais.
+Os resultados numéricos e as figuras deste relatório foram obtidos a partir da
+análise descrita no caderno Jupyter entregue junto com o PDF.

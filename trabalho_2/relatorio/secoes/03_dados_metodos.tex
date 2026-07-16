@@ -1,0 +1,48 @@
+\section{Dados e métodos}
+
+\subsection{Conjuntos fornecidos}
+
+Cada janela possui \(\valNWin\) amostras, adquiridas a \(\valFs\,\mathrm{Hz}\).
+O template do pulso tem \(\valNTmpl\) amostras. Os arquivos utilizados são:
+
+\begin{table}[H]
+\centering
+\caption{Arquivos de dados do Trabalho~2.}
+\label{tab:dados-t2}
+\begin{tabular}{llp{7.2cm}}
+\toprule
+Arquivo & Dimensão & Uso \\
+\midrule
+\texttt{template\_pulso.csv} & \(\valNTmpl\) amostras & Forma \(s[n]\) \\
+\texttt{ruido\_treino.csv} & \(\valNNoise\) janelas & Estatística do ruído e limiar \\
+\texttt{sinais\_treino.csv} & \(\valNTrain\) janelas & Ajuste e comparação de métodos \\
+\texttt{rotulos\_treino.csv} & \(\valNTrain\) rótulos & \(event\_present\), \(t0\_sample\), \(A\) \\
+\texttt{sinais\_teste.csv} & \(\valNTest\) janelas & Avaliação final \\
+\texttt{rotulos\_teste.csv} & \(\valNTest\) rótulos & Métricas finais \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Os rótulos indicam se há pulso (\(\texttt{event\_present}\)), a amostra
+aproximada de início (\(\texttt{t0\_sample}\), igual a \(-1\) quando não há
+evento) e a amplitude verdadeira (\(\texttt{amplitude\_A}\)).
+
+\subsection{Procedimento}
+
+A análise seguiu a ordem abaixo, com verificação em cada etapa antes de avançar:
+
+\begin{enumerate}
+  \item caracterização do ruído (média, variância, autocorrelação e PSD);
+  \item análise temporal e espectral do template;
+  \item projeto e aplicação do filtro de Wiener;
+  \item filtro casado e combinação Wiener\,+\,casado;
+  \item estimação de amplitude por BLUE (branco e colorido);
+  \item limiar com FA aproximada de \(1\%\) nas janelas de ruído puro;
+  \item avaliação completa no treino e escolha dos métodos;
+  \item avaliação única no teste, com parâmetros congelados.
+\end{enumerate}
+
+Os métodos mínimos exigidos pelo enunciado foram implementados: sinal bruto,
+Wiener, filtro casado, BLUE e a combinação Wiener\,+\,casado. No sinal bruto e
+no Wiener, a estatística de detecção usada para comparação foi o máximo de
+\(|y[n]|\) na janela; no casado, o máximo da correlação com o template.

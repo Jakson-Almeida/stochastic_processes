@@ -1,8 +1,8 @@
 # Processos Estocásticos
 
-Repositório com análises de sistemas LIT discretos excitados por processos
-estocásticos: caracterização no tempo e na frequência, identificação de modelos,
-validação e detecção de anomalias.
+Repositório com análises de sistemas e sinais à luz de processos estocásticos:
+caracterização no tempo e na frequência, identificação de modelos, filtragem,
+detecção e estimação.
 
 ## Estrutura
 
@@ -10,12 +10,13 @@ validação e detecção de anomalias.
 stochastic_processes/
 ├── README.md
 ├── requirements.txt
-├── trabalho_1/                 # Trabalho 1 (concluído)
+├── trabalho_1/                 # Trabalho 1
 │   ├── enunciado.pdf
-│   ├── dados/                  # CSVs de treino, validação e teste
-│   ├── notebooks/              # análise em Jupyter
-│   └── relatorio/              # fonte LaTeX e PDF
-└── trabalho_2/                 # Trabalho 2 (em preparação)
+│   ├── dados/
+│   ├── notebooks/
+│   └── relatorio/
+└── trabalho_2/                 # Trabalho 2
+    ├── enunciado.pdf
     ├── dados/
     ├── notebooks/
     └── relatorio/
@@ -29,36 +30,36 @@ branca e colorida, além de detecção de anomalias via resíduos.
 | Artefato | Caminho |
 |----------|---------|
 | Enunciado | `trabalho_1/enunciado.pdf` |
-| Dados | `trabalho_1/dados/` |
-| Caderno principal | `trabalho_1/notebooks/resolucao_trabalho.ipynb` |
-| Relatório PDF | `trabalho_1/relatorio/relatorio.pdf` |
+| Caderno | `trabalho_1/notebooks/resolucao_trabalho.ipynb` |
+| Relatório | `trabalho_1/relatorio/relatorio.pdf` |
 
-### Como reproduzir
+## Trabalho 2
+
+Detecção e estimação de pulsos impulsivos em ruído (Wiener, filtro casado, BLUE).
+
+| Artefato | Caminho |
+|----------|---------|
+| Enunciado | `trabalho_2/enunciado.pdf` |
+| Caderno | `trabalho_2/notebooks/resolucao_trabalho.ipynb` |
+| Relatório | `trabalho_2/relatorio/relatorio.pdf` |
+
+Detalhes em [`trabalho_2/README.md`](trabalho_2/README.md).
+
+## Como reproduzir
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate      # Windows (PowerShell)
 # source .venv/bin/activate # Linux/macOS
 pip install -r requirements.txt
-jupyter notebook trabalho_1/notebooks/resolucao_trabalho.ipynb
 ```
 
-Para recompilar o relatório LaTeX (opcional):
-
-```bash
-python trabalho_1/relatorio/gerar_figuras.py
-cd trabalho_1/relatorio
-pdflatex relatorio.tex
-pdflatex relatorio.tex
-```
-
-## Trabalho 2
-
-Estrutura criada em `trabalho_2/`. Ver `trabalho_2/README.md`.
+Em seguida, abra o caderno do trabalho desejado em `trabalho_1/notebooks/` ou
+`trabalho_2/notebooks/`.
 
 ## Ferramentas
 
 - `numpy` / `pandas` — manipulação numérica e CSVs
-- `scipy.signal` — correlação, PSD (Welch), espectro cruzado e coerência
+- `scipy.signal` — correlação, PSD (Welch), filtragem
 - `matplotlib` — gráficos
-- `statsmodels` / `scipy` — identificação de modelos e resíduos
+- `statsmodels` / `scipy` — modelos e resíduos (Trabalho 1)

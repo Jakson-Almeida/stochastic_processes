@@ -1,0 +1,91 @@
+\section{Resultados}
+
+\subsection{Desempenho no treino}
+
+A Tabela~\ref{tab:treino} resume as métricas no conjunto de treino. O filtro
+casado e a combinação Wiener\,+\,casado obtêm AUC \(\valAucCasadoTrain\),
+superior ao limiar baseado no máximo de \(|y|\) (sinal bruto ou Wiener). O RMSE
+da forma cai de cerca de \(0{,}50\) (bruto/Wiener) para cerca de \(0{,}13\)
+quando se reconstrói \(\hat{A}\,s[n-\hat{n}_0]\); o BLUE colorido reduz ainda
+um pouco esse erro e melhora o RMSE de amplitude.
+
+O limiar a FA \(\approx 1\%\) é conservador: a precisão é alta, mas a
+revocação é baixa, o que reduz o F1 (por exemplo, \(\valFoneCasadoTrain\) para o
+casado). A matriz de confusão do melhor detector no treino
+(Figura~\ref{fig:cm-train}) ilustra esse compromisso: poucos falsos positivos
+(\(\valFpTrain\)) e muitos falsos negativos (\(\valFnTrain\)).
+
+\begin{table}[H]
+\centering
+\caption{Métricas no conjunto de treino.}
+\label{tab:treino}
+\resizebox{\textwidth}{!}{\input{figuras/tab_metricas_treino.tex}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{08_roc_treino.png}
+\caption{Curvas ROC no conjunto de treino.}
+\label{fig:roc-train}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{10_confusao_treino.png}
+\caption{Matriz de confusão no treino (detector escolhido).}
+\label{fig:cm-train}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.9\textwidth]{12_reconstrucao_exemplo.png}
+\caption{Exemplo de reconstrução do pulso a partir do BLUE e comparação com Wiener.}
+\label{fig:recon}
+\end{figure}
+
+\subsection{Desempenho no teste}
+
+Com limiares e filtros congelados, as métricas no teste (Tabela~\ref{tab:teste})
+acompanham o comportamento do treino. A AUC do casado sobe ligeiramente para
+\(\valAucCasadoTest\), enquanto o F1 cai para \(\valFoneCasadoTest\) --- de novo
+pelo limiar conservador. O RMSE da forma permanece próximo
+(\(\valRmseWaveCasadoTrain\) no treino e \(\valRmseWaveCasadoTest\) no teste),
+e o BLUE colorido mantém o melhor RMSE de amplitude entre os métodos
+comparados.
+
+\begin{table}[H]
+\centering
+\caption{Métricas no conjunto de teste.}
+\label{tab:teste}
+\resizebox{\textwidth}{!}{\input{figuras/tab_metricas_teste.tex}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.75\textwidth]{09_roc_teste.png}
+\caption{Curvas ROC no conjunto de teste.}
+\label{fig:roc-test}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.55\textwidth]{11_confusao_teste.png}
+\caption{Matriz de confusão no teste (mesmo limiar do treino).}
+\label{fig:cm-test}
+\end{figure}
+
+\subsection{Comparação dos métodos}
+
+Com base apenas no treino, e confirmado no teste:
+
+\begin{itemize}
+  \item \textbf{Reconstrução da forma:} melhor com \valBestWave, isto é,
+  estimando \(\hat{A}\) e reposicionando o template; o sinal bruto e a saída de
+  Wiener isolada ficam bem atrás em RMSE.
+  \item \textbf{Detecção:} o filtro casado (e Wiener\,+\,casado, com desempenho
+  praticamente idêntico) supera o uso do máximo de \(|y|\). A pré-filtragem de
+  Wiener não melhorou de forma relevante a AUC neste conjunto.
+  \item \textbf{Amplitude:} \valBestAmp reduz o RMSE em relação ao BLUE branco
+  e ao baseline do máximo da observação, o que é coerente com o caráter
+  colorido do ruído.
+\end{itemize}

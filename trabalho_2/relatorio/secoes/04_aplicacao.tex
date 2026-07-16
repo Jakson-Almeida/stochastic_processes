@@ -1,0 +1,104 @@
+\section{Aplicação aos dados de treino}
+
+\subsection{Caracterização do ruído}
+
+Nas \(\valNNoise\) janelas de ruído puro, a média amostral foi
+\(\valMuRuido\) e a variância \(\valVarRuido\) (desvio padrão
+\(\valStdRuido\)). A autocorrelação média, normalizada, apresenta
+\(\valFracAutocorrFora\%\) dos lags fora da faixa aproximada
+\(\pm 2/\sqrt{N}\) esperada para ruído branco. A razão entre o máximo e o
+mínimo da PSD estimada por Welch foi \(\valPsdRatio\).
+
+Esses indícios levam a tratar o ruído como colorido
+(\valNoiseColored). A covariância Toeplitz construída a partir da
+autocorrelação empírica foi usada no BLUE colorido.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{01_ruido_autocorr_psd.png}
+\caption{Autocorrelação média e PSD do ruído de treino.}
+\label{fig:ruido}
+\end{figure}
+
+\subsection{Template do pulso}
+
+O template concentra a maior parte da energia em baixas frequências: cerca de
+\(\valEnergyLowBand\%\) da energia espectral está abaixo de \(100\,\mathrm{Hz}\).
+A Figura~\ref{fig:template} compara o espectro normalizado do pulso com a PSD
+do ruído. O conteúdo do pulso sobrepõe-se a uma região em que o ruído ainda é
+relevante, o que ajuda a explicar a dificuldade da detecção em algumas janelas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{02_template_espectro.png}
+\caption{Forma temporal do template e comparação espectral com o ruído.}
+\label{fig:template}
+\end{figure}
+
+\subsection{Filtro de Wiener}
+
+O filtro de Wiener em frequência foi projetado com \(S_{xx}\) a partir do
+template e \(S_{rr}\) estimada no ruído puro. A Figura~\ref{fig:wiener} mostra
+exemplos antes e depois da filtragem. O RMSE médio da forma, tomando a própria
+saída de Wiener como estimativa do pulso, ficou em \(\valRmseWienerWave\),
+praticamente igual ao do sinal bruto (\(\valRmseBrutoWave\)). Nesse conjunto, a
+pré-filtragem de Wiener pouco alterou a visualização e a métrica de
+reconstrução em relação ao sinal observado.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{03_wiener_exemplos.png}
+\caption{Exemplos de janelas com e sem pulso, antes e depois do Wiener.}
+\label{fig:wiener}
+\end{figure}
+
+\subsection{Filtro casado}
+
+A correlação com o template separa razoavelmente as estatísticas de janelas com
+e sem pulso (Figura~\ref{fig:casado-sep}). O erro absoluto de posição tem
+mediana \(\valNZeroErrMed\) amostras no treino, embora a média
+(\(\valNZeroErrMean\)) seja maior por causa de outliers em que o máximo da
+correlação não coincide com o início verdadeiro do pulso.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{04_casado_separacao.png}
+\caption{Separação das estatísticas do casado e histograma do erro de \(n_0\).}
+\label{fig:casado-sep}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{05_casado_exemplo.png}
+\caption{Exemplo de janela com pulso e saída do filtro casado.}
+\label{fig:casado-ex}
+\end{figure}
+
+\subsection{BLUE da amplitude}
+
+Com \(\hat{n}_0\) obtido pelo casado, o BLUE branco atingiu RMSE de amplitude
+\(\valRmseBlueBranco\) no treino, enquanto o BLUE colorido reduziu o erro para
+\(\valRmseBlueColorido\). Ambos superam o baseline ingênuo que usa o máximo de
+\(y[n]\) (RMSE \(\valRmseNaiveA\)). A Figura~\ref{fig:blue} mostra a dispersão
+entre amplitudes verdadeiras e estimadas.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=\textwidth]{06_blue_scatter.png}
+\caption{Amplitude estimada versus verdadeira (treino), BLUE branco e colorido.}
+\label{fig:blue}
+\end{figure}
+
+\subsection{Limiar de detecção}
+
+Usando apenas as janelas de ruído puro, o limiar do filtro casado foi definido
+como o percentil 99 da estatística de detecção:
+\(\eta = \valThrCasado\). A taxa de falso alarme empírica nesse conjunto foi
+\(\valFaCasado\%\), conforme o alvo de aproximadamente \(1\%\).
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{07_limiar.png}
+\caption{Histograma da estatística sob \(H_0\) e limiar correspondente.}
+\label{fig:limiar}
+\end{figure}

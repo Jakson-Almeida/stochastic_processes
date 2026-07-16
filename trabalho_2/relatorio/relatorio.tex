@@ -1,0 +1,77 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[brazil]{babel}
+\usepackage[a4paper,margin=2.5cm,top=3cm]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{fancyhdr}
+\usepackage{caption}
+\usepackage{siunitx}
+\usepackage[hidelinks]{hyperref}
+
+\captionsetup{font=small,labelfont=bf}
+\graphicspath{{figuras/}{imagens/}}
+
+\setcounter{tocdepth}{2}
+\setcounter{secnumdepth}{3}
+
+\input{valores.tex}
+
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\includegraphics[height=1.1cm]{logo_header_esquerda.png}}
+\fancyhead[R]{\includegraphics[height=0.9cm]{logo_header_direita.png}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{35pt}
+\addtolength{\topmargin}{-17pt}
+
+\begin{document}
+
+\begin{titlepage}
+\centering
+\vspace*{1cm}
+
+\includegraphics[width=0.45\textwidth]{logo_ufjf_capa.png}
+
+\vspace{1.2cm}
+{\Large Universidade Federal de Juiz de Fora\par}
+
+\vspace{2.5cm}
+\rule{\textwidth}{0.5pt}\\[0.4cm]
+{\huge\bfseries Trabalho 2 --- Processos Estocásticos\par}
+\rule{\textwidth}{0.5pt}
+
+\vspace{2.5cm}
+\begin{flushleft}
+\large
+\textbf{Autor:} Jakson da Rocha Almeida\\[0.3cm]
+\textbf{Professor:} Rafael Antunes Nóbrega\\[0.3cm]
+\textbf{Curso:} Mestrado em Engenharia Elétrica --- Sistemas Eletrônicos
+\end{flushleft}
+
+\vfill
+{\large Julho de 2026\par}
+{\large UFJF, Juiz de Fora, MG\par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+\listoffigures
+\clearpage
+\listoftables
+\clearpage
+
+\input{secoes/01_introducao.tex}
+\input{secoes/02_teoria.tex}
+\input{secoes/03_dados_metodos.tex}
+\input{secoes/04_aplicacao.tex}
+\input{secoes/05_resultados.tex}
+\input{secoes/06_conclusao.tex}
+
+\end{document}
