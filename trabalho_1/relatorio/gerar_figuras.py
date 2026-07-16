@@ -1,10 +1,10 @@
 """Gera todas as figuras e tabelas numéricas usadas no relatório.
 
 Reproduz os cálculos do notebook notebooks/resolucao_trabalho.ipynb e salva:
-  - figuras em relatorio/figuras/*.png
-  - valores numéricos em relatorio/figuras/valores.tex (macros LaTeX)
+  - figuras em trabalho_1/relatorio/figuras/*.png
+  - valores numéricos em trabalho_1/relatorio/valores.tex (macros LaTeX)
 
-Uso: python relatorio/gerar_figuras.py
+Uso: python trabalho_1/relatorio/gerar_figuras.py
 """
 
 from pathlib import Path
@@ -20,8 +20,10 @@ from scipy import signal
 plt.style.use("seaborn-v0_8-whitegrid")
 plt.rcParams.update({"figure.dpi": 130, "savefig.dpi": 130, "font.size": 11})
 
-ROOT = Path(__file__).resolve().parent.parent
-DATA_DIR = ROOT if (ROOT / "dados_treino_branco.csv").exists() else ROOT / "data"
+ROOT = Path(__file__).resolve().parent.parent  # trabalho_1/
+DATA_DIR = ROOT / "dados"
+if not (DATA_DIR / "dados_treino_branco.csv").exists():
+    DATA_DIR = ROOT if (ROOT / "dados_treino_branco.csv").exists() else ROOT / "data"
 FIG = Path(__file__).resolve().parent / "figuras"
 FIG.mkdir(exist_ok=True)
 

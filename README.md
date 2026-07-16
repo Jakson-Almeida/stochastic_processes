@@ -1,144 +1,64 @@
 # Processos Estocásticos
 
-Caracterização de sinais, estimação da relação entrada–saída e identificação de um
-sistema **LIT (Linear e Invariante no Tempo) discreto** excitado por processos
-estocásticos. Os dados foram gerados a partir de um sistema LIT conhecido; o objetivo
-é caracterizá-los nos domínios do **tempo** e da **frequência**, identificar um modelo,
-validá-lo criticamente e analisar a presença de anomalias.
+Repositório com análises de sistemas LIT discretos excitados por processos
+estocásticos: caracterização no tempo e na frequência, identificação de modelos,
+validação e detecção de anomalias.
 
-## Objetivo
-
-A partir dos sinais de entrada `u[n]` e saída `y[n]`, o projeto aborda:
-
-1. Caracterizar estatisticamente os sinais (média, variância, autocorrelação).
-2. Estimar a relação entrada–saída no domínio da frequência (PSD, espectro cruzado, coerência).
-3. Estimar a resposta em frequência do sistema por dois métodos e compará-los.
-4. Identificar pelo menos um modelo LIT (FIR, ARX ou espaço de estados).
-5. Validar o modelo em um conjunto independente.
-6. Analisar resíduos e detectar anomalias.
-
-## Dados
-
-Quatro arquivos CSV na raiz do projeto. Todos possuem três colunas:
-
-| Coluna | Descrição |
-|--------|-----------|
-| `n`    | Índice de tempo discreto (amostra) |
-| `u`    | Sinal de entrada `u[n]` |
-| `y`    | Sinal de saída `y[n]` |
-
-| Arquivo | Amostras | Uso |
-|---------|----------|-----|
-| `dados_treino_branco.csv`    | 5000 | Treino — entrada aproximadamente **branca** |
-| `dados_validacao_branco.csv` | 3000 | **Validação** do modelo identificado |
-| `dados_treino_colorido.csv`  | 5000 | Treino — entrada **colorida** (não excita todo o espectro) |
-| `dados_teste_anomalia.csv`   | 5000 | **Teste** de detecção de anomalia |
-
-## Tarefas
-
-### 1. Entrada branca (`dados_treino_branco.csv`)
-
-1. Estimar média, variância e autocorrelação de `u[n]` e `y[n]`.
-2. Estimar a correlação cruzada entre `u[n]` e `y[n]`.
-3. Estimar a PSD (densidade espectral de potência) de `u[n]` e `y[n]`.
-4. Estimar o espectro cruzado entre `u[n]` e `y[n]`.
-5. Estimar a **coerência** entrada–saída, interpretando em quais faixas de frequência
-   a relação pode ser considerada mais confiável.
-6. Estimar a resposta em frequência do sistema por **dois métodos** e comparar:
-   - Método 1: estimativa aproximada do **módulo** (adequado para entrada branca e
-     ruído de saída não dominante).
-   - Método 2: estimativa **complexa** (módulo e fase), analisada em conjunto com a coerência.
-7. Identificar pelo menos um modelo LIT (ex.: FIR, ARX ou espaço de estados).
-8. Validar o modelo com `dados_validacao_branco.csv`: aplicar `uval[n]` para obter
-   `ŷval[n]` e comparar com `yval[n]` verdadeiro.
-
-### 2. Entrada colorida (`dados_treino_colorido.csv`)
-
-1. Repetir a análise temporal e espectral feita para o caso de entrada branca.
-2. Comparar os resultados com o caso de entrada branca.
-3. Discutir por que a identificação pode piorar em algumas faixas de frequência quando
-   a entrada não excita adequadamente todo o espectro.
-
-### 3. Detecção de anomalia (`dados_teste_anomalia.csv`)
-
-1. Usar o modelo identificado a partir dos dados normais.
-2. Calcular os resíduos `e[n] = y[n] - ŷ[n]`.
-3. Analisar média, variância, autocorrelação e energia local dos resíduos.
-4. Detectar possíveis mudanças de regime, aumento do erro ou impulsos.
-5. Discutir se a anomalia aparece mais claramente no sinal de saída ou nos resíduos.
-
-## Estrutura do projeto
+## Estrutura
 
 ```
 stochastic_processes/
 ├── README.md
 ├── requirements.txt
-├── dados_treino_branco.csv
-├── dados_validacao_branco.csv
-├── dados_treino_colorido.csv
-├── dados_teste_anomalia.csv
-├── notebooks/
-│   ├── visualizar_dados.ipynb      # visualização inicial dos CSVs
-│   └── resolucao_trabalho.ipynb  # análise completa (A, B e C)
-└── relatorio/
-    ├── relatorio.tex               # fonte LaTeX do relatório
-    ├── relatorio.pdf               # relatório compilado
-    ├── gerar_figuras.py            # gera figuras e valores.tex a partir dos dados
-    ├── valores.tex                 # macros com resultados numéricos
-    ├── secoes/                     # seções do relatório
-    ├── figuras/                    # gráficos e fragmentos de tabela
-    └── imagens/                    # logos UFJF
+├── trabalho_1/                 # Trabalho 1 (concluído)
+│   ├── enunciado.pdf
+│   ├── dados/                  # CSVs de treino, validação e teste
+│   ├── notebooks/              # análise em Jupyter
+│   └── relatorio/              # fonte LaTeX e PDF
+└── trabalho_2/                 # Trabalho 2 (em preparação)
+    ├── dados/
+    ├── notebooks/
+    └── relatorio/
 ```
 
-## Como reproduzir
+## Trabalho 1
 
-1. Criar e ativar um ambiente virtual Python:
+Caracterização, identificação e validação de um sistema LIT discreto com entrada
+branca e colorida, além de detecção de anomalias via resíduos.
+
+| Artefato | Caminho |
+|----------|---------|
+| Enunciado | `trabalho_1/enunciado.pdf` |
+| Dados | `trabalho_1/dados/` |
+| Caderno principal | `trabalho_1/notebooks/resolucao_trabalho.ipynb` |
+| Relatório PDF | `trabalho_1/relatorio/relatorio.pdf` |
+
+### Como reproduzir
 
 ```bash
 python -m venv .venv
 .venv\Scripts\activate      # Windows (PowerShell)
 # source .venv/bin/activate # Linux/macOS
-```
-
-2. Instalar as dependências:
-
-```bash
 pip install -r requirements.txt
+jupyter notebook trabalho_1/notebooks/resolucao_trabalho.ipynb
 ```
 
-3. Abrir e executar o caderno principal:
+Para recompilar o relatório LaTeX (opcional):
 
 ```bash
-jupyter notebook notebooks/resolucao_trabalho.ipynb
-```
-
-O caderno carrega os CSVs da raiz do projeto, realiza toda a análise (seções A, B e C)
-e gera os gráficos.
-
-Para recompilar o relatório LaTeX localmente (opcional):
-
-```bash
-python relatorio/gerar_figuras.py
-cd relatorio
+python trabalho_1/relatorio/gerar_figuras.py
+cd trabalho_1/relatorio
 pdflatex relatorio.tex
 pdflatex relatorio.tex
 ```
 
-O script `gerar_figuras.py` reproduz os cálculos do caderno e grava as figuras em
-`relatorio/figuras/` e os valores numéricos em `relatorio/valores.tex`.
+## Trabalho 2
+
+Estrutura criada em `trabalho_2/`. Ver `trabalho_2/README.md`.
 
 ## Ferramentas
 
-Análise em **Python**, utilizando:
-
-- `numpy` / `pandas` — manipulação numérica e dos CSVs.
-- `scipy.signal` — correlação, PSD (Welch), espectro cruzado (CSD) e coerência.
-- `matplotlib` — geração dos gráficos.
-- `statsmodels` / `scipy` — identificação de modelos (FIR/ARX) e análise de resíduos.
-
-## Saídas
-
-- **Relatório em PDF** (`relatorio/relatorio.pdf`) — gráficos, estimativas, descrição dos
-  métodos e interpretação dos resultados.
-- **Caderno Jupyter** (`notebooks/resolucao_trabalho.ipynb`) — código para carregar os
-  dados, calcular as estimativas e reproduzir os resultados do relatório.
+- `numpy` / `pandas` — manipulação numérica e CSVs
+- `scipy.signal` — correlação, PSD (Welch), espectro cruzado e coerência
+- `matplotlib` — gráficos
+- `statsmodels` / `scipy` — identificação de modelos e resíduos
