@@ -371,6 +371,9 @@ for lo, hi in BANDS:
 
 valores["BvarY"] = f"{y_b.var():.3f}"
 valores["BvarYbranco"] = f"{y_a.var():.3f}"
+valores["BmediaU"] = f"{u_b.mean():.3f}"
+valores["BvarU"] = f"{u_b.var():.3f}"
+valores["BmediaY"] = f"{y_b.mean():.3f}"
 
 # ================================================================ TÓPICO C
 y_hat_c = np.convolve(u_c, h_fir)[: len(u_c)]
@@ -467,6 +470,11 @@ valores["CstdNormal"] = f"{e_c[mask_normal].std():.4f}"
 valores["CstdAnom"] = f"{e_c[mask_anom].std():.4f}"
 valores["CstdAnomRatio"] = f"{e_c[mask_anom].std() / baseline_std:.1f}"
 valores["CmaxAnom"] = f"{np.max(np.abs(e_c[mask_anom])):.2f}"
+# razão de variância anômalo/normal dos resíduos (mesma definição usada para y)
+valores["CvarRatioE"] = f"{e_c[mask_anom].var() / e_c[mask_normal].var():.1f}"
+# média dos resíduos por regime (exigida pelo enunciado)
+valores["CmediaENormal"] = f"{e_c[mask_normal].mean():.4f}"
+valores["CmediaEAnom"] = f"{e_c[mask_anom].mean():.4f}"
 
 # C.5 — y vs resíduos
 y_seg = y_c[M:]
@@ -488,31 +496,40 @@ ax[1].legend(fontsize=9)
 save(fig, "C_comparacao_y_residuo")
 
 r_y_anom = autocorr(y_seg[mask_anom], ACF_LAG)
+r_y_norm = autocorr(y_seg[mask_normal], ACF_LAG)
 valores["CvarRatioY"] = f"{y_seg[mask_anom].var() / baseline_y_var:.1f}"
 valores["CautoAnomY"] = f"{np.mean(np.abs((r_y_anom/r_y_anom[0])[1:]) > 1.96/np.sqrt(mask_anom.sum())):.2f}"
+valores["CautoNormalY"] = f"{np.mean(np.abs((r_y_norm/r_y_norm[0])[1:]) > 1.96/np.sqrt(mask_normal.sum())):.2f}"
 valores["CimpulsosY"] = f"{int(np.sum(np.abs(y_seg - y_mean_normal) > imp_thr))}"
+# picos normalizados pelo desvio do regime normal do próprio teste, para os dois sinais
 valores["CpicoStdY"] = f"{np.max(np.abs(y_seg[mask_anom]-y_mean_normal))/y_seg[mask_normal].std():.1f}"
-valores["CpicoStdE"] = f"{np.max(np.abs(e_c[mask_anom]))/baseline_std:.1f}"
+valores["CpicoStdE"] = f"{np.max(np.abs(e_c[mask_anom]))/e_c[mask_normal].std():.1f}"
 
 # ---------------------------------------------------------------- macros + tabelas
+
+def pt_num(v: str) -> str:
+    """Troca o ponto decimal por vírgula (padrão pt-BR) para o LaTeX."""
+    return v.replace(".", "{,}")
+
+
 lines = ["% Gerado por gerar_figuras.py - nao editar manualmente"]
 for k, v in valores.items():
-    lines.append(f"\\newcommand{{\\val{k}}}{{{v}}}")
+    lines.append(f"\\newcommand{{\\val{k}}}{{{pt_num(v)}}}")
 (FIG.parent / "valores.tex").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
-def tabela_faixa(rows, fname, col2, col3):
+def tabela_faixa(rows, fname):
     out = []
     for faixa, a, b in rows:
-        out.append(f"{{{faixa}}} & {a:.3f} & {b:.3f}")
+        out.append(f"{{{pt_num(faixa)}}} & {pt_num(f'{a:.3f}')} & {pt_num(f'{b:.3f}')}")
     (FIG / fname).write_text(" \\\\\n".join(out) + "\n", encoding="utf-8")
 
 
-tabela_faixa(band_rows, "tab_coerencia_faixa.tex", "branco", "colorido")
+tabela_faixa(band_rows, "tab_coerencia_faixa.tex")
 # tabela erro por faixa (B.3)
 out = []
 for faixa, err, c in erro_faixa_b:
-    out.append(f"{{{faixa}}} & {err:.2f} & {c:.3f}")
+    out.append(f"{{{pt_num(faixa)}}} & {pt_num(f'{err:.2f}')} & {pt_num(f'{c:.3f}')}")
 (FIG / "tab_erro_faixa.tex").write_text(" \\\\\n".join(out) + "\n", encoding="utf-8")
 
 print("\nFiguras e valores gerados em", FIG.parent)

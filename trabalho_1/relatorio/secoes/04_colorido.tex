@@ -13,6 +13,24 @@ resultados com o caso anterior. A Figura~\ref{fig:B_sinais} mostra os sinais no 
 
 \subsection{Análise temporal e espectral}
 
+A Tabela~\ref{tab:B_stats} reúne as estatísticas de primeira e segunda ordem. A
+entrada mantém média próxima de zero e variância próxima de um, mas a saída tem
+variância bem maior do que no caso branco, ponto retomado na comparação adiante.
+
+\begin{table}[H]
+\centering
+\caption{Estatísticas dos sinais do conjunto de entrada colorida.}
+\label{tab:B_stats}
+\begin{tabular}{lcc}
+\toprule
+Sinal & Média & Variância \\
+\midrule
+$u[n]$ & \valBmediaU & \valBvarU \\
+$y[n]$ & \valBmediaY & \valBvarY \\
+\bottomrule
+\end{tabular}
+\end{table}
+
 A Figura~\ref{fig:B_autocorr} mostra as autocorrelações. Diferente do caso branco, a
 entrada agora tem autocorrelação que decai devagar, com uma fração de \valBfracAutoU{}
 dos atrasos fora da banda de confiança. Isso confirma que a entrada é colorida e tem

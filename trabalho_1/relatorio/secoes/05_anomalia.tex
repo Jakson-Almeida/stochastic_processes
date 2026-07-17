@@ -39,9 +39,13 @@ o valor de referência.}
 
 \subsubsection{Estatísticas globais}
 
-A variância global dos resíduos do conjunto de teste é cerca de \valCvarRatio{} vezes
-maior do que a de referência, o que já aponta uma diferença de comportamento em
-relação ao caso normal.
+A média dos resíduos permanece próxima de zero nos dois regimes
+(\valCmediaENormal{} no trecho normal e \valCmediaEAnom{} no trecho anômalo), o
+que indica que a anomalia não introduz um desvio sistemático de nível: ela se
+manifesta na variância e na dinâmica. Já a variância global dos resíduos do
+conjunto de teste é cerca de \valCvarRatio{} vezes maior do que a de
+referência, o que já aponta uma diferença de comportamento em relação ao caso
+normal.
 
 \subsubsection{Energia local}
 
@@ -125,27 +129,31 @@ medidas para os dois sinais.
 
 \begin{table}[H]
 \centering
-\caption{Comparação entre o sinal de saída e os resíduos no regime anômalo.}
+\caption{Comparação entre o sinal de saída e os resíduos. Os picos são medidos
+no regime anômalo em unidades do desvio padrão do regime normal de cada sinal.}
 \label{tab:C_comparacao}
 \begin{tabular}{lcc}
 \toprule
 Medida & Saída $y[n]$ & Resíduos $e[n]$ \\
 \midrule
-Razão de variância (anômalo/normal) & \valCvarRatioY & \valCvarRatio \\
+Razão de variância (anômalo/normal) & \valCvarRatioY & \valCvarRatioE \\
 Pico em relação ao desvio normal & \valCpicoStdY & \valCpicoStdE \\
-Atrasos de autocorrelação fora da banda & \valCautoAnomY & \valCautoAnom \\
+Atrasos de autocorrelação fora da banda (normal) & \valCautoNormalY & \valCautoNormal \\
+Atrasos de autocorrelação fora da banda (anômalo) & \valCautoAnomY & \valCautoAnom \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 A anomalia aparece nos dois sinais, mas fica mais clara nos resíduos. O sinal de saída
 sempre tem variabilidade, porque é a resposta de um sistema excitado por ruído, e por
-isso a mudança eleva a variância apenas cerca de \valCvarRatioY{} vezes. Nos resíduos,
-que removem a parte previsível da saída, o contraste é bem maior: a variância sobe
-cerca de \valCvarRatio{} vezes em relação à referência e os impulsos se destacam de um
-patamar próximo de zero. Aplicar o mesmo limiar de impulso ao sinal de saída marcaria
-um número muito grande de amostras, porque a saída atinge amplitudes altas mesmo sem
-anomalia. Além disso, a autocorrelação dos resíduos no regime anômalo revela que o
-modelo deixou de explicar a dinâmica, informação que o sinal de saída sozinho não
-fornece. Por esses motivos, a análise dos resíduos é o caminho mais adequado para a
-detecção.
+isso a mudança eleva a sua variância apenas cerca de \valCvarRatioY{} vezes. Nos
+resíduos, que removem a parte previsível da saída, o contraste é bem maior: a
+variância do regime anômalo é cerca de \valCvarRatioE{} vezes a do regime normal e os
+impulsos se destacam de um patamar próximo de zero. Aplicar o mesmo limiar de impulso
+ao sinal de saída marcaria \valCimpulsosY{} amostras, contra \valCnumImpulsos{} nos
+resíduos, porque a saída atinge amplitudes altas mesmo sem anomalia. A autocorrelação
+conta a mesma história: em $y[n]$ ela já está fora da banda no regime normal
+(fração \valCautoNormalY), por se tratar de um sinal filtrado, e por isso não
+discrimina nada; nos resíduos ela passa de \valCautoNormal{} para \valCautoAnom{} e
+revela que o modelo deixou de explicar a dinâmica. Por esses motivos, a análise dos
+resíduos é o caminho mais adequado para a detecção.
