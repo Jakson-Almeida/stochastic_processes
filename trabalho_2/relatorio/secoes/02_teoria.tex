@@ -3,20 +3,24 @@
 \subsection{Filtro de Wiener}
 
 O filtro de Wiener busca o filtro linear que minimiza o erro quadrático médio
-entre a saída e um sinal desejado. No domínio da frequência, para processos
-estacionários de média nula, a resposta em frequência ótima é
+entre a saída e um sinal desejado. Seja \(y = x + r\) a observação, em que
+\(x\) é o sinal desejado e \(r\) o ruído. No domínio da frequência, para
+processos estacionários de média nula, a resposta em frequência ótima é
 \begin{equation}
-H(e^{j\omega}) = \frac{S_{xy}(e^{j\omega})}{S_{xx}(e^{j\omega})},
+H(e^{j\omega}) = \frac{S_{xy}(e^{j\omega})}{S_{yy}(e^{j\omega})},
 \end{equation}
-em que \(S_{xx}\) é a densidade espectral da observação e \(S_{xy}\) é o
-espectro cruzado entre observação e sinal desejado. Quando o sinal desejado e o
-ruído são incorrelacionados e \(y = x + r\), obtém-se a forma
+em que \(S_{yy}\) é a densidade espectral da observação e \(S_{xy}\) é o
+espectro cruzado entre sinal desejado e observação. Quando o sinal desejado e o
+ruído são incorrelacionados, \(S_{xy} = S_{xx}\) e
+\(S_{yy} = S_{xx} + S_{rr}\), de modo que
 \begin{equation}
-H(e^{j\omega}) = \frac{S_{xx}(e^{j\omega})}{S_{xx}(e^{j\omega}) + S_{rr}(e^{j\omega})}.
+H(e^{j\omega}) = \frac{S_{xx}(e^{j\omega})}{S_{xx}(e^{j\omega}) + S_{rr}(e^{j\omega})},
 \end{equation}
-No presente trabalho, \(S_{xx}\) é modelada a partir do espectro do template
-(escalado por uma amplitude típica do treino) e \(S_{rr}\) é estimada pelo
-método de Welch nas janelas de ruído puro.
+em que \(S_{xx}\) é a densidade espectral do sinal desejado (limpo). No
+presente trabalho, \(S_{xx}\) é modelada a partir do espectro do template,
+escalado pela potência típica das amplitudes do treino, e \(S_{rr}\) é
+estimada nas janelas de ruído puro na mesma convenção espectral, de modo que
+as duas grandezas sejam diretamente comparáveis.
 
 \subsection{Filtro casado}
 
@@ -26,7 +30,7 @@ versão revertida no tempo do template, \(h[n] = s[-n]\). A saída equivale à
 correlação cruzada entre a observação e \(s[n]\). O máximo dessa saída é usado
 como estatística de detecção, e a posição do máximo estima \(n_0\).
 
-Quando o ruído é colorido, a formulação ótima envolve a branqueação do ruído
+Quando o ruído é colorido, a formulação ótima envolve o branqueamento do ruído
 (ou, de forma equivalente, o uso da covariância \(C^{-1}\)). Mesmo assim, o
 filtro casado clássico permanece um detector simples e robusto e é o método
 base adotado aqui para localização e detecção.

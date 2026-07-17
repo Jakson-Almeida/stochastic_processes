@@ -16,16 +16,16 @@ Arquivo & Dimensão & Uso \\
 \texttt{template\_pulso.csv} & \(\valNTmpl\) amostras & Forma \(s[n]\) \\
 \texttt{ruido\_treino.csv} & \(\valNNoise\) janelas & Estatística do ruído e limiar \\
 \texttt{sinais\_treino.csv} & \(\valNTrain\) janelas & Ajuste e comparação de métodos \\
-\texttt{rotulos\_treino.csv} & \(\valNTrain\) rótulos & \(event\_present\), \(t0\_sample\), \(A\) \\
+\texttt{rotulos\_treino.csv} & \(\valNTrain\) rótulos & \texttt{event\_present}, \texttt{t0\_sample}, \(A\) \\
 \texttt{sinais\_teste.csv} & \(\valNTest\) janelas & Avaliação final \\
 \texttt{rotulos\_teste.csv} & \(\valNTest\) rótulos & Métricas finais \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Os rótulos indicam se há pulso (\(\texttt{event\_present}\)), a amostra
-aproximada de início (\(\texttt{t0\_sample}\), igual a \(-1\) quando não há
-evento) e a amplitude verdadeira (\(\texttt{amplitude\_A}\)).
+Os rótulos indicam se há pulso (\texttt{event\_present}), a amostra
+aproximada de início (\texttt{t0\_sample}, igual a \(-1\) quando não há
+evento) e a amplitude verdadeira (\texttt{amplitude\_A}).
 
 \subsection{Procedimento}
 
@@ -43,6 +43,21 @@ A análise seguiu a ordem abaixo, com verificação em cada etapa antes de avan�
 \end{enumerate}
 
 Os métodos mínimos exigidos pelo enunciado foram implementados: sinal bruto,
-Wiener, filtro casado, BLUE e a combinação Wiener\,+\,casado. No sinal bruto e
-no Wiener, a estatística de detecção usada para comparação foi o máximo de
-\(|y[n]|\) na janela; no casado, o máximo da correlação com o template.
+Wiener, filtro casado, BLUE e a combinação Wiener\,+\,casado. Cada linha das
+tabelas de resultados corresponde a um \emph{pipeline} completo:
+
+\begin{itemize}
+  \item \textbf{Sinal bruto} e \textbf{Wiener}: detecção pelo máximo de
+  \(|y[n]|\) na janela (bruta ou filtrada), posição pelo índice do máximo
+  (corrigido pelo pico do template) e amplitude pelo próprio valor máximo ---
+  um baseline ingênuo, sem uso do template. Como estimativa da forma de onda,
+  usa-se a própria janela (bruta ou filtrada).
+  \item \textbf{Casado} (isolado ou após Wiener): detecção pelo máximo da
+  correlação com o template, posição \(\hat{n}_0\) pelo argumento desse máximo
+  e amplitude pelo estimador BLUE (branco ou colorido) aplicado à observação
+  original. A forma de onda estimada é \(\hat{A}\,s[n-\hat{n}_0]\).
+\end{itemize}
+
+Nas tabelas, a coluna ``FA emp.'' é a taxa de falso alarme empírica no próprio
+conjunto avaliado, isto é, a fração de janelas sem pulso classificadas como
+contendo pulso pelo limiar fixado no treino.

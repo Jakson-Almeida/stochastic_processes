@@ -3,11 +3,18 @@
 \subsection{Desempenho no treino}
 
 A Tabela~\ref{tab:treino} resume as métricas no conjunto de treino. O filtro
-casado e a combinação Wiener\,+\,casado obtêm AUC \(\valAucCasadoTrain\),
-superior ao limiar baseado no máximo de \(|y|\) (sinal bruto ou Wiener). O RMSE
-da forma cai de cerca de \(0{,}50\) (bruto/Wiener) para cerca de \(0{,}13\)
-quando se reconstrói \(\hat{A}\,s[n-\hat{n}_0]\); o BLUE colorido reduz ainda
-um pouco esse erro e melhora o RMSE de amplitude.
+casado obtém AUC \(\valAucCasadoTrain\), superior à estatística baseada no
+máximo de \(|y|\) (sinal bruto, AUC \(0{,}675\)); a pré-filtragem de Wiener
+melhora o detector ingênuo (AUC \(0{,}702\)), mas, combinada ao casado, reduz
+ligeiramente a AUC (\(\valAucWcTrain\)) em relação ao casado puro. O RMSE da
+forma cai de cerca de \(0{,}50\) (sinal bruto) para \(\valRmseWienerWave\)
+(saída de Wiener) e para cerca de \(0{,}13\) quando se reconstrói
+\(\hat{A}\,s[n-\hat{n}_0]\); o BLUE colorido reduz ainda um pouco esse erro e
+melhora o RMSE de amplitude. Note que a saída de Wiener, embora suave, é
+atenuada: usar seu máximo como estimativa de amplitude produz o pior RMSE de
+\(A\) da tabela. O erro mediano de posição também reflete os estimadores de
+cada linha: o argmax da janela (bruta ou filtrada) localiza pior o pulso do
+que o pico da correlação com o template.
 
 O limiar a FA \(\approx 1\%\) é conservador: a precisão é alta, mas a
 revocação é baixa, o que reduz o F1 (por exemplo, \(\valFoneCasadoTrain\) para o
@@ -48,10 +55,12 @@ casado). A matriz de confusão do melhor detector no treino
 Com limiares e filtros congelados, as métricas no teste (Tabela~\ref{tab:teste})
 acompanham o comportamento do treino. A AUC do casado sobe ligeiramente para
 \(\valAucCasadoTest\), enquanto o F1 cai para \(\valFoneCasadoTest\) --- de novo
-pelo limiar conservador. O RMSE da forma permanece próximo
-(\(\valRmseWaveCasadoTrain\) no treino e \(\valRmseWaveCasadoTest\) no teste),
-e o BLUE colorido mantém o melhor RMSE de amplitude entre os métodos
-comparados.
+pelo limiar conservador. A taxa de falso alarme empírica do casado permanece
+próxima do alvo de \(1\%\); a do detector ingênuo no sinal bruto sobe para
+\(3{,}3\%\), sinal de que o limiar sobre \(\max|y|\) generaliza pior. O RMSE
+da forma permanece próximo (\(\valRmseWaveCasadoTrain\) no treino e
+\(\valRmseWaveCasadoTest\) no teste), e o BLUE colorido mantém o melhor RMSE
+de amplitude entre os métodos comparados.
 
 \begin{table}[H]
 \centering
@@ -80,12 +89,13 @@ Com base apenas no treino, e confirmado no teste:
 
 \begin{itemize}
   \item \textbf{Reconstrução da forma:} melhor com \valBestWave, isto é,
-  estimando \(\hat{A}\) e reposicionando o template; o sinal bruto e a saída de
-  Wiener isolada ficam bem atrás em RMSE.
-  \item \textbf{Detecção:} o filtro casado (e Wiener\,+\,casado, com desempenho
-  praticamente idêntico) supera o uso do máximo de \(|y|\). A pré-filtragem de
-  Wiener não melhorou de forma relevante a AUC neste conjunto.
+  estimando \(\hat{A}\) e reposicionando o template; a saída de Wiener fica
+  próxima, e o sinal bruto fica bem atrás em RMSE.
+  \item \textbf{Detecção:} o filtro casado puro supera tanto o uso do máximo de
+  \(|y|\) quanto a combinação Wiener\,+\,casado --- a pré-filtragem descarta
+  parte da banda em que ainda há sinal, reduzindo ligeiramente a AUC.
   \item \textbf{Amplitude:} \valBestAmp reduz o RMSE em relação ao BLUE branco
   e ao baseline do máximo da observação, o que é coerente com o caráter
-  colorido do ruído.
+  colorido do ruído. O máximo da saída de Wiener é o pior estimador de
+  amplitude, por causa da atenuação imposta pelo filtro.
 \end{itemize}

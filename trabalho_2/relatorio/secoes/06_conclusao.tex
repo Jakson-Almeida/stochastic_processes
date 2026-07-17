@@ -8,12 +8,14 @@ Nessas condições, o filtro casado foi o elemento central para detecção e
 localização do instante \(n_0\) (mediana do erro da ordem de
 \(\valNZeroErrMed\) amostras). O limiar escolhido para FA aproximada de \(1\%\)
 controla bem os falsos positivos, ao custo de muitos falsos negativos e F1
-moderado. O filtro de Wiener, na formulação adotada, pouco alterou a
-reconstrução e a detecção em relação ao sinal bruto ou ao casado puro.
+moderado. O filtro de Wiener melhora a visualização e a reconstrução direta da
+forma em relação ao sinal bruto, mas atenua a amplitude do pulso e, usado como
+pré-filtragem do casado, reduz ligeiramente a AUC em relação ao casado puro.
 
 A estimação de amplitude beneficia-se do BLUE que incorpora a covariância do
 ruído. A reconstrução \(\hat{A}\,s[n-\hat{n}_0]\) é claramente superior ao uso
-direto de \(y[n]\) ou da saída de Wiener como estimativa da forma do pulso.
+direto de \(y[n]\) como estimativa da forma do pulso e ainda supera, por
+margem menor, a saída do filtro de Wiener.
 
 Em síntese: para detectar, o filtro casado; para estimar amplitude e
 reconstruir a forma, o BLUE colorido alinhado pelo casado. Os resultados no

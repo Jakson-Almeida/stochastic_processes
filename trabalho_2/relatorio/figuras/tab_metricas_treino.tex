@@ -1,12 +1,11 @@
-\begin{tabular}{lcccccc}
+\begin{tabular}{lcccccccc}
 \toprule
-Método & AUC & F1 & RMSE forma & RMSE $A$ & med$|\Delta n_0|$ & FA emp. \\
+Método & AUC & Prec. & Rev. & F1 & RMSE forma & RMSE $A$ & med$|\Delta n_0|$ & FA emp. \\
 \midrule
-Sinal bruto & 0.675 & 0.229 & 0.496 & 1.020 & 4.00 & 0.010 \\
-Wiener & 0.676 & 0.224 & 0.496 & 1.020 & 4.00 & 0.010 \\
-Filtro casado & 0.731 & 0.344 & 0.129 & 1.020 & 4.00 & 0.005 \\
-Wiener + casado & 0.731 & 0.344 & 0.129 & 1.020 & 4.00 & 0.005 \\
-BLUE (branco) & 0.731 & 0.344 & 0.129 & 1.020 & 4.00 & 0.005 \\
-BLUE (colorido) & 0.731 & 0.344 & 0.121 & 0.856 & 4.00 & 0.005 \\
+Sinal bruto & 0{,}675 & 0{,}952 & 0{,}130 & 0{,}229 & 0{,}496 & 1{,}117 & 11{,}00 & 0{,}010 \\
+Wiener & 0{,}702 & 0{,}980 & 0{,}160 & 0{,}275 & 0{,}139 & 2{,}381 & 7{,}00 & 0{,}005 \\
+Casado + BLUE (branco) & 0{,}731 & 0{,}985 & 0{,}208 & 0{,}344 & 0{,}129 & 1{,}020 & 4{,}00 & 0{,}005 \\
+Wiener + casado & 0{,}722 & 0{,}979 & 0{,}153 & 0{,}265 & 0{,}134 & 1{,}008 & 5{,}00 & 0{,}005 \\
+Casado + BLUE (colorido) & 0{,}731 & 0{,}985 & 0{,}208 & 0{,}344 & 0{,}121 & 0{,}856 & 4{,}00 & 0{,}005 \\
 \bottomrule
 \end{tabular}

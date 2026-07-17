@@ -38,12 +38,17 @@ relevante, o que ajuda a explicar a dificuldade da detecção em algumas janelas
 \subsection{Filtro de Wiener}
 
 O filtro de Wiener em frequência foi projetado com \(S_{xx}\) a partir do
-template e \(S_{rr}\) estimada no ruído puro. A Figura~\ref{fig:wiener} mostra
-exemplos antes e depois da filtragem. O RMSE médio da forma, tomando a própria
-saída de Wiener como estimativa do pulso, ficou em \(\valRmseWienerWave\),
-praticamente igual ao do sinal bruto (\(\valRmseBrutoWave\)). Nesse conjunto, a
-pré-filtragem de Wiener pouco alterou a visualização e a métrica de
-reconstrução em relação ao sinal observado.
+template (escalado pela potência média das amplitudes do treino) e \(S_{rr}\)
+estimada nas janelas de ruído puro, ambos na mesma convenção espectral. Como o
+ruído tem potência relevante em toda a banda, o filtro resultante atenua
+fortemente o sinal fora da faixa de baixas frequências em que o pulso concentra
+energia. A Figura~\ref{fig:wiener} mostra exemplos antes e depois da filtragem:
+a saída é bem mais suave, e o RMSE médio da forma, tomando a própria saída de
+Wiener como estimativa do pulso, cai de \(\valRmseBrutoWave\) (sinal bruto)
+para \(\valRmseWienerWave\). Há, porém, um efeito colateral: a saída é
+atenuada em relação ao pulso original, o que prejudica a estimação direta da
+amplitude a partir do máximo da janela filtrada, como se verá nas tabelas de
+resultados.
 
 \begin{figure}[H]
 \centering
@@ -92,9 +97,12 @@ entre amplitudes verdadeiras e estimadas.
 \subsection{Limiar de detecção}
 
 Usando apenas as janelas de ruído puro, o limiar do filtro casado foi definido
-como o percentil 99 da estatística de detecção:
-\(\eta = \valThrCasado\). A taxa de falso alarme empírica nesse conjunto foi
-\(\valFaCasado\%\), conforme o alvo de aproximadamente \(1\%\).
+como o percentil 99 da estatística de detecção: \(\eta = \valThrCasado\). Por
+construção, a taxa de falso alarme nesse mesmo conjunto é de aproximadamente
+\(1\%\); a validação efetiva do limiar é feita em dados que não participaram
+do ajuste, por meio da taxa de falso alarme empírica nas janelas sem pulso dos
+conjuntos de treino e de teste (coluna ``FA emp.'' das
+Tabelas~\ref{tab:treino} e~\ref{tab:teste}), que permanece próxima do alvo.
 
 \begin{figure}[H]
 \centering

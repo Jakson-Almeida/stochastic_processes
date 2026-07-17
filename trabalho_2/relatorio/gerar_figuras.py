@@ -260,15 +260,14 @@ energy_low = float(S_pow[band_mask].sum() / S_pow.sum())
 # 3. Wiener filter (frequency domain)
 # ---------------------------------------------------------------------------
 
-# Signal PSD model from template energy scaled by typical A^2 from train events
-A_typ = float(lab_train.loc[lab_train.event_present == 1, "amplitude_A"].mean() ** 2)
+# Signal spectrum model: template spectrum scaled by E[A^2] from train events
+A_typ = float((lab_train.loc[lab_train.event_present == 1, "amplitude_A"] ** 2).mean())
 # Place template at mid-window for spectral shape of signal component
 s_mid = place_template(s, (N_WIN - N_TMPL) // 2)
 Sxx = np.abs(np.fft.rfft(s_mid, n=NFFT)) ** 2 * A_typ
-# Noise PSD on FFT grid
-f_fft = np.fft.rfftfreq(NFFT, d=1 / FS)
-Nxx = np.interp(f_fft, f_psd, psd_r)
-# Scale Nxx to match time-domain variance roughly
+# Noise spectrum in the SAME convention (mean periodogram of the noise windows),
+# so that Sxx and Nxx are directly comparable and H is properly scaled.
+Nxx = np.mean(np.abs(np.fft.rfft(Y_noise, n=NFFT, axis=1)) ** 2, axis=0)
 # Wiener: H = Sxx / (Sxx + Nxx)
 H_w = Sxx / (Sxx + Nxx + 1e-18)
 
@@ -519,16 +518,19 @@ def eval_set(Y, labels, Y_w_precomputed=None):
     else:
         Yw = np.stack([apply_wiener_freq(y, H_w) for y in Y])
 
+    # "naive" rows form pipelines completos e independentes: deteccao por max|y|,
+    # posicao por argmax (corrigida pelo pico do template) e amplitude pelo maximo.
+    # "matched" rows: n0 pelo casado e amplitude por BLUE.
     configs = {
-        "bruto": (Y, "raw", False),
-        "wiener": (Yw, "raw", False),
+        "bruto": (Y, "naive", False),
+        "wiener": (Yw, "naive", False),
         "casado": (Y, "matched", False),
         "wiener_casado": (Yw, "matched", False),
-        "blue_branco": (Y, "matched", False),
         "blue_colorido": (Y, "matched", True),
     }
 
     y_true = labels.event_present.to_numpy().astype(int)
+    peak_offset = int(np.argmax(s))
 
     for name, (Y_in, det_mode, colored) in configs.items():
         n = len(Y_in)
@@ -537,15 +539,19 @@ def eval_set(Y, labels, Y_w_precomputed=None):
         Ah = np.zeros(n)
         Yh = np.zeros_like(Y)
         for i in range(n):
-            out, n0, sc = matched_filter(Y_in[i], s)
-            n0h[i] = n0
             if det_mode == "matched":
+                out, n0, sc = matched_filter(Y_in[i], s)
                 scores[i] = sc
+                n0h[i] = n0
+                sal = place_template(s, n0)
+                # amplitude sempre estimada na observacao original
+                Ah[i] = blue_amplitude(Y[i], sal, Cinv if colored else None)
+                Yh[i] = Ah[i] * sal
             else:
                 scores[i] = float(np.max(np.abs(Y_in[i])))
-            sal = place_template(s, n0)
-            Ah[i] = blue_amplitude(Y[i], sal, Cinv if colored else None)
-            Yh[i] = Ah[i] * sal
+                n0h[i] = int(np.clip(np.argmax(Y_in[i]) - peak_offset, 0, N_WIN - N_TMPL))
+                Ah[i] = float(np.max(Y_in[i]))
+                Yh[i] = Y_in[i]
 
         if name == "bruto":
             thr = thr_raw
@@ -561,25 +567,9 @@ def eval_set(Y, labels, Y_w_precomputed=None):
         auc = auc_trapz(fpr, tpr)
         det = detection_metrics(y_true, y_pred)
 
-        # waveform RMSE: for wiener method also report direct Wiener RMSE separately
-        if name == "wiener":
-            wave = []
-            for i, row in labels.iterrows():
-                if int(row.event_present) != 1:
-                    continue
-                true = true_pulse(s, int(row.t0_sample), float(row.amplitude_A))
-                wave.append(np.sqrt(np.mean((Y_in[i] - true) ** 2)))
-            rmse_wave = float(np.mean(wave))
-        elif name == "bruto":
-            wave = []
-            for i, row in labels.iterrows():
-                if int(row.event_present) != 1:
-                    continue
-                true = true_pulse(s, int(row.t0_sample), float(row.amplitude_A))
-                wave.append(np.sqrt(np.mean((Y[i] - true) ** 2)))
-            rmse_wave = float(np.mean(wave))
-        else:
-            rmse_wave = rmse_waveform(Yh, labels, s)
+        # waveform RMSE: naive rows use Y_in directly (Yh = Y_in); matched rows
+        # use the reconstructed pulse A_hat * s[n - n0_hat]
+        rmse_wave = rmse_waveform(Yh, labels, s)
 
         tp_mask = (y_true == 1) & (y_pred == 1)
         mpos = y_true == 1
@@ -682,32 +672,38 @@ axes[1].set_xlabel("n")
 savefig("12_reconstrucao_exemplo.png")
 
 # Summary tables
-methods_order = ["bruto", "wiener", "casado", "wiener_casado", "blue_branco", "blue_colorido"]
+methods_order = ["bruto", "wiener", "casado", "wiener_casado", "blue_colorido"]
 labels_pt = {
     "bruto": "Sinal bruto",
     "wiener": "Wiener",
-    "casado": "Filtro casado",
+    "casado": "Casado + BLUE (branco)",
     "wiener_casado": "Wiener + casado",
-    "blue_branco": "BLUE (branco)",
-    "blue_colorido": "BLUE (colorido)",
+    "blue_colorido": "Casado + BLUE (colorido)",
 }
+
+
+def fmt_pt(x, nd=3):
+    """Formata número com vírgula decimal para o LaTeX."""
+    return f"{x:.{nd}f}".replace(".", "{,}")
 
 
 def write_metrics_table(eval_dict, fname):
     lines = [
-        r"\begin{tabular}{lcccccc}",
+        r"\begin{tabular}{lcccccccc}",
         r"\toprule",
-        r"Método & AUC & F1 & RMSE forma & RMSE $A$ & med$|\Delta n_0|$ & FA emp. \\",
+        r"Método & AUC & Prec. & Rev. & F1 & RMSE forma & RMSE $A$ & med$|\Delta n_0|$ & FA emp. \\",
         r"\midrule",
     ]
     for m in methods_order:
         r = eval_dict[m]
-        # FA emp on this set: fp / (fp+tn) 
+        # FA emp on this set: fp / (fp+tn)
         det = r["det"]
         fa = det["fp"] / (det["fp"] + det["tn"]) if (det["fp"] + det["tn"]) else 0
         lines.append(
-            f"{labels_pt[m]} & {r['auc']:.3f} & {det['f1']:.3f} & "
-            f"{r['rmse_wave']:.3f} & {r['rmse_amp']:.3f} & {r['n0_med']:.2f} & {fa:.3f} \\\\"
+            f"{labels_pt[m]} & {fmt_pt(r['auc'])} & {fmt_pt(det['precision'])} & "
+            f"{fmt_pt(det['recall'])} & {fmt_pt(det['f1'])} & "
+            f"{fmt_pt(r['rmse_wave'])} & {fmt_pt(r['rmse_amp'])} & "
+            f"{fmt_pt(r['n0_med'], 2)} & {fmt_pt(fa)} \\\\"
         )
     lines += [r"\bottomrule", r"\end{tabular}"]
     (FIG / fname).write_text("\n".join(lines) + "\n", encoding="utf-8")
@@ -720,15 +716,16 @@ write_metrics_table(test_eval, "tab_metricas_teste.tex")
 # Choose best methods per task (train)
 best_wave = min(methods_order, key=lambda m: train_eval[m]["rmse_wave"])
 best_det = max(["bruto", "wiener", "casado", "wiener_casado"], key=lambda m: train_eval[m]["auc"])
-best_amp = min(["blue_branco", "blue_colorido", "casado"], key=lambda m: train_eval[m]["rmse_amp"])
+best_amp = min(["casado", "blue_colorido"], key=lambda m: train_eval[m]["rmse_amp"])
 
 # ---------------------------------------------------------------------------
 # valores.tex
 # ---------------------------------------------------------------------------
 
 def fmt(x, nd=4):
+    """Formata float com vírgula decimal (padrão pt-BR) para uso no LaTeX."""
     if isinstance(x, (float, np.floating)):
-        return f"{float(x):.{nd}f}"
+        return f"{float(x):.{nd}f}".replace(".", "{,}")
     return str(x)
 
 
